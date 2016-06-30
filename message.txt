@@ -1,0 +1,3 @@
+section: value
+subject: Just testing out mailR
+body: This is a test of the mailR package for R.I will be using this to send users information about when their data is ready to be downloaded
