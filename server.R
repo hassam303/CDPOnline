@@ -1,19 +1,19 @@
 library(shiny)
 library(mailR)
 library(DBI)
+library(shinyjs)
 require(parallel)
 options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from user input
 
 shinyServer(function(input, output,session){
   
   # output$dlButton <- downloadHandler(
-  #   
   #   filename = "downloadedFile",
   #   content = function(file){
   #     write.table(read.delim("message.txt", sep = ":"),file)
   #   }
   # )
-  
+ 
   # Important! : creationPool should be hidden to avoid elements flashing before they are moved.
   #              But hidden elements are ignored by shiny, unless this option below is set.
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
@@ -32,20 +32,38 @@ shinyServer(function(input, output,session){
   # End Important 
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
+  # Disable the Submit button if email, WG_file, TRANS_file, not inputted
+  observe({
+    toggleState("submit", 
+                !is.null(input$email) && input$email != "" && !is.null(input$WG_file) && !is.null(input$TRANS_file) && input$theta != "")
+  })
+  
+  # Disable theta if no filter selected
+  observe({
+    toggleState("theta", !is.null(input$filter))
+  })
+  
   #This button created the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
     
-    #Start user input assingments
+    #Start user input assignments
     ##############################
-    workflow <- "KEGGWorkflow.R"
-    #End user input assingments
     
-    if (!is.null(input$WG_file) && !is.null(input$TRANS_file )){
+    # if (input$pathway == 'Kegg') {
+    workflow <- "KEGGWorkflow.R"
+    # } else if (input$pathway == 'TF') {
+    # workflow <- "TFWorkflow.R" 
+    # } else {
+    # workflow <- "WikiWorkflow.R" }
+    
+    #End user input assignments
+    
+    if (!is.null(input$WG_file) && !is.null(input$TRANS_file ) && noClicks==1){
       
-      createJobStatusBar()#Internal code found below
+      createJobStatusBar() #Internal code found below
       
-      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath)
+      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start)
       
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
@@ -61,9 +79,8 @@ shinyServer(function(input, output,session){
     
     if (noClicks > 1 ){}
     
-    if (noClicks){
-      createResultsBar()#Internal code found below
-      
+    if (noClicks == 1){
+      createResultsBar()#Internal code found below    
     }
   })
 
@@ -74,25 +91,22 @@ shinyServer(function(input, output,session){
     topic = as.character(table$value[[1]])
     message = as.character(table$value[[2]])
     
-    
-    
     send.mail(from = "hassam303@gmail.com",
               to = list("hassam303@gmail.com"),
               subject = topic,
               body = message,
-              smtp = list(host.name = "smtp.gmail.com", 
-                          port = 465, 
-                          user.name = "hassam303@gmail.com", 
-                          passwd = "Sammyandtom", 
+              smtp = list(host.name = "smtp.gmail.com",
+                          port = 465,
+                          user.name = "hassam303@gmail.com",
+                          passwd = "Sammyandtom",
                           ssl = TRUE),
               authenticate = TRUE,
               debug = TRUE,
               send = TRUE)
-    
+
     output$mailSent <- renderText("Sent!")
   })
   #End code for SendEmailButton (in Results tab)
-  
   
   createJobStatusBar <- function(){
     
@@ -108,18 +122,14 @@ shinyServer(function(input, output,session){
                          your Job ID which can be used to return to the page to retrieve your
                          results (once they are ready) up to seven days after they are processed"),
                       h3("Job ID: 000-000-000"),
+                      
                       actionButton("jobReadyButton",
                                    "Go To Results")
                )
                ###End Job Status tab Layout###
       )
-    )
-    
-    
-    
-    addTabToTabset(newTabPanels, "navbar")
-    
-    
+    )    
+    addTabToTabset(newTabPanels, "navbar")   
   }
   
   createResultsBar <- function(){
@@ -133,21 +143,8 @@ shinyServer(function(input, output,session){
                actionButton("sendEmailButton", "Send Email")
                
                ###End Results Layout###
-      )
-      
-    )
-    
-    addTabToTabset(newTabPanels, "navbar")
-    
-    
-    
-  }
-  
-
-  
-  
-  
+      )    
+    )  
+    addTabToTabset(newTabPanels, "navbar")  
+  } 
 })
-
-
-
