@@ -1,6 +1,5 @@
 library(shiny)
 
-
 shinyUI(fluidPage( theme = "bootstrap.css", 
   # Important! : JavaScript functionality to add the Tabs
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
@@ -55,16 +54,16 @@ shinyUI(fluidPage( theme = "bootstrap.css",
   # End Important 
   #Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
+  shinyjs::useShinyjs(),
+  
   navbarPage("CDP Online",
              id = "navbar", 
              ###Start Home Layout###
              tabPanel("Home",
                       sidebarLayout(
-                       
                          sidebarPanel(
-                          fileInput("WG_file", 
-                                    label="WEBGESTALT INPUT", 
-                                    accept = '.tsv'),
+                          tags$div(title="Please select a .tsv file.",
+                            fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv')),
                           
                           radioButtons("pathway", label = "ENRICHMENT PATHWAY", 
                                        choices = list("KEGG" = "Kegg", 
@@ -74,16 +73,17 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                           
                           br(),
                           
-                          fileInput("TRANS_file", 
-                                    label = "TRANSCRIPTOMIC DATA"),
+                          tags$div(title="Please select a .csv file.",
+                            fileInput("TRANS_file", label = "TRANSCRIPTOMIC DATA", accept = '.csv')),
+                          
+                          numericInput("col_start", 
+                                       label = "COLUMN WHERE TRANSCRIPTOMIC DATA BEGINS",
+                                       min=2, step=1, value=2),
                           
                           tags$hr(),
                           
-                          radioButtons("filter", 
-                                       label = "INDEPENDENT FILTERING", 
-                                       choices = list("Mean Abundance" = 1, 
-                                                      "Variance" = 2), 
-                                       selected=1),
+                          checkboxGroupInput("filter", label = "INDEPENDENT FILTERING",
+                                             choices = c("Mean Abundance" = 1, "Variance" = 2)),
                           
                           numericInput("theta", 
                                        label="Theta", 
@@ -91,13 +91,15 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                                        step = 0.1, 
                                        value=0.0),
                           
+                          tags$hr(),
+                          
+                          textInput("email", label="EMAIL RESULTS TO:"),
+                          
                           fluidRow(
                             actionButton("submit", "Submit"),
-                            uiOutput("toJobResults")
-                
+                            uiOutput("toJobResults")         
                           )
                         ),
-                        
                         
                         mainPanel(
                           h3("Stage 1: Gene List Generation"),
@@ -109,7 +111,9 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                           p("Following KEGG, WikiPathways (WikiP) or TF enrichment
                             analysis, the resulting pathways and gene sets are downloaded from WebGestalt as
                             .tsv files. The result of this stage is a set of pathways or gene sets derived from
-                            proteomic data."),
+                            proteomic data. View an ", 
+                            tags$a(href="http://freyja.cs.cofc.edu/downloads/ComplementaryDomainPrioritization/Marra_5percentFDR_kegg_protein_enrichment.tsv", "example "),
+                            "WebGestalt output file."),
                           
                           br(),
                           
@@ -128,7 +132,9 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                             ),
                           
                           p("Resulting gene lists are applied to the entire transcriptomics data set,
-                            thus prioritizing genes involved in pathways showing enrichment at the protein expression level and removing genes not present in these pathways."),
+                            thus prioritizing genes involved in pathways showing enrichment at the protein expression level and removing genes not present in these pathways. View an ", 
+                            tags$a(href="http://freyja.cs.cofc.edu/downloads/ComplementaryDomainPrioritization/Catteno_array.csv", "example"), 
+                            " transcriptomic data file."),
                           br(),
                           
                           h4("Independent Filters"),
@@ -149,15 +155,9 @@ shinyUI(fluidPage( theme = "bootstrap.css",
              ###End Home Layout###
   ),
   
-  
   # Important! : 'Freshly baked' tabs first enter here.
   #Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   uiOutput("creationPool", style = "display: none;")
   # End Important
   #Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
-  
-  
-
-  
-  
 ))
