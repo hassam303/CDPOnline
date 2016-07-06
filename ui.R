@@ -82,7 +82,7 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                           
                           tags$hr(),
                           
-                          checkboxGroupInput("filter", label = "INDEPENDENT FILTERING",
+                          checkboxGroupInput("filtering", label = "INDEPENDENT FILTERING",
                                              choices = c("Mean Abundance" = 1, "Variance" = 2)),
                           
                           numericInput("theta", 
@@ -161,3 +161,4 @@ shinyUI(fluidPage( theme = "bootstrap.css",
   # End Important
   #Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
 ))
+
