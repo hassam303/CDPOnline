@@ -40,7 +40,7 @@ shinyServer(function(input, output,session){
   
   # Disable theta if no filter selected
   observe({
-    toggleState("theta", !is.null(input$filter))
+    toggleState("theta", !is.null(input$filtering))
   })
   
   #This button created the 'Job Status' Tab + job initiation logic
@@ -51,6 +51,7 @@ shinyServer(function(input, output,session){
     ##############################
     
     # if (input$pathway == 'Kegg') {
+   
     workflow <- "KEGGWorkflow.R"
     # } else if (input$pathway == 'TF') {
     # workflow <- "TFWorkflow.R" 
@@ -63,11 +64,15 @@ shinyServer(function(input, output,session){
       
       createJobStatusBar() #Internal code found below
       
-      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start)
+      ##########################
+      # updateTabsetPanel(session, "navbar", 'Job')
+      
+      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, input$filtering, input$theta)
       
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
     }
+    
     
     if (noClicks > 1){}
     
@@ -111,7 +116,7 @@ shinyServer(function(input, output,session){
   createJobStatusBar <- function(){
     
     newTabPanels <- list(
-      tabPanel("Job Status",
+      tabPanel("Job Status", value = "Job",
                ###Start Job Status tab Layout###
                
                column(3),
@@ -130,6 +135,7 @@ shinyServer(function(input, output,session){
       )
     )    
     addTabToTabset(newTabPanels, "navbar")   
+    
   }
   
   createResultsBar <- function(){
