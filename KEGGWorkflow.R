@@ -18,7 +18,7 @@ KEGGWorkflow <- function(tsvFile, csvFile, startCol, filtering, theta){
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
   } else if (filtering == "v") {
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-  } else {
+  } else if (filtering == "mv") {
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
   }
