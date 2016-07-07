@@ -64,10 +64,8 @@ shinyServer(function(input, output,session){
       
       createJobStatusBar() #Internal code found below
       
-      ##########################
-      # updateTabsetPanel(session, "navbar", 'Job')
-      
-      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, input$filtering, input$theta)
+      filtering <- paste(input$filtering, collapse="")
+      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
       
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
@@ -92,10 +90,10 @@ shinyServer(function(input, output,session){
   #Start code for SendEmailButton (in Results tab)
   observeEvent(input$sendEmailButton, {
     table = read.delim("message.txt", sep = ":")
-    
+
     topic = as.character(table$value[[1]])
     message = as.character(table$value[[2]])
-    
+
     send.mail(from = "hassam303@gmail.com",
               to = list("hassam303@gmail.com"),
               subject = topic,
