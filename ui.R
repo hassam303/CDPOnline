@@ -83,7 +83,7 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                           tags$hr(),
                           
                           checkboxGroupInput("filtering", label = "INDEPENDENT FILTERING",
-                                             choices = c("Mean Abundance" = 1, "Variance" = 2)),
+                                             choices = c("Mean Abundance" = "m", "Variance" = "v")),
                           
                           numericInput("theta", 
                                        label="Theta", 
