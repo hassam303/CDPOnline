@@ -1,0 +1,7 @@
+{
+"jobID" : "",
+"enrichmentType":"",
+"sigLevel":"",
+"refSet":"",
+"minGenes":""
+}
