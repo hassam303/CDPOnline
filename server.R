@@ -32,6 +32,15 @@ shinyServer(function(input, output,session){
   # End Important 
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
+  # Disable textarea if input WG selected
+  observe({
+    toggleState("WG_input", input$id_or_wg != "WG")
+  })
+  
+  observe({
+    toggleState("submit_entrez", input$id_or_wg != "WG")
+  })
+  
   # Disable the Submit button if email, WG_file, TRANS_file, not inputted
   observe({
     toggleState("submit", 
@@ -46,6 +55,11 @@ shinyServer(function(input, output,session){
   #This button created the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
+    
+    #Validate that numericinput is integer, >=2
+    validate(
+      need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
+    )
     
     #Start user input assignments
     ##############################
@@ -143,6 +157,8 @@ shinyServer(function(input, output,session){
                ###Start Results Layout###
                
                h3("All kinds of cool results will be displayed here! Exciting"),
+               downloadButton("download_priori", "Download prioritized data"),
+               br(),
                textOutput("mailSent"), 
                actionButton("sendEmailButton", "Send Email")
                
