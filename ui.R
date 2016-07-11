@@ -68,11 +68,7 @@ shinyUI(fluidPage( theme = "bootstrap.css",
                                         selected = "WG"),
                            
                            tags$textarea(id = "WG_input", rows=5, cols=27, placeholder = "Enter Entrez gene IDs. "),
-                           # textInput("WG_input", label = "WEBGESTALT INPUT", width = '100%', placeholder = "Enter gene ids."),
-                           
-                           fluidRow(
-                             actionButton("submit_entrez", "Submit Entrez IDs")
-                           ),
+                           # textInput("WG_input", label = "WEBGESTALT INPUT", width = '100%', placeholder = "Enter gene ids.")
                            
                            tags$hr(),
                            

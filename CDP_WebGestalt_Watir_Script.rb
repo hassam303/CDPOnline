@@ -10,10 +10,18 @@
 require 'watir-webdriver'
 require 'headless'
 require "open-uri"
+require "json"
 Watir.default_timeout = 300
 
+
+file = File.read("#{Dir.pwd}/users" + "/userData.txt")
+userData = JSON.parse(file)
+
+
+
 DOWNLOAD_PATH = "#{Dir.pwd}/downloads" + "/test.tsv" #REPLACE text.tsv w/ "JSON:jobID"
-ENTREZ_IDS_FILE = "entrez-ids.txt" #ARGV[0]
+ENTREZ_IDS = userData['entrezIDs']
+
 
 
 headless = Headless.new
@@ -39,8 +47,7 @@ b.select_list(:name => 'organism').select 'hsapiens'
 #<option>cfamiliaris</option>
 #<option>dmelanogaster</option>
 b.select_list(:name => 'idtype').select 'hsapiens__entrezgene'
-ids = IO.read(ENTREZ_IDS_FILE)
-b.textarea(:name => 'pastefile').set ids
+b.textarea(:name => 'pastefile').set ENTREZ_IDS.join("\n")
 b.button(:index => 1).click
 
 puts b.title#*

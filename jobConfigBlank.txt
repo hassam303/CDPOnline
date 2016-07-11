@@ -1,7 +1,13 @@
 {
-"jobID" : "",
-"enrichmentType":"",
-"sigLevel":"",
-"refSet":"",
-"minGenes":""
+"jobID":null,
+"email":null,
+"enrichmentType":null,
+"thetaVal":null,
+"refSet":null,
+"minGenes":null,
+"entrezIDs":null,
+"filtering":null,
+"startCol":null,
+"WG_file_path":null,
+"TRANS_file_path":null
 }

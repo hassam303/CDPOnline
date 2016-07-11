@@ -3,6 +3,8 @@ library(mailR)
 library(DBI)
 library(shinyjs)
 require(parallel)
+require(jsonlite)
+
 options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from user input
 
 shinyServer(function(input, output,session){
@@ -32,31 +34,25 @@ shinyServer(function(input, output,session){
   # End Important 
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
-  # Disable textarea if input WG selected
   observe({
+    # Disable textarea if input WG selected
     toggleState("WG_input", input$id_or_wg != "WG")
-  })
-  
-  observe({
-    toggleState("submit_entrez", input$id_or_wg != "WG")
-  })
-  
-  # Disable the Submit button if email, WG_file, TRANS_file, not inputted
-  observe({
+    
+    # Disable the Submit button if email, WG_file, TRANS_file, not inputted
     toggleState("submit", 
                 !is.null(input$email) && input$email != "" && !is.null(input$WG_file) && !is.null(input$TRANS_file) && input$theta != "")
+    
+    # Disable theta if no filter selected
+    toggleState("theta", !is.null(input$filtering))
+    
   })
   
-  # Disable theta if no filter selected
-  observe({
-    toggleState("theta", !is.null(input$filtering))
-  })
   
   #This button created the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
     
-    #Validate that numericinput is integer, >=2
+    # Validate that numericinput is integer, >=2
     validate(
       need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
     )
@@ -75,16 +71,15 @@ shinyServer(function(input, output,session){
     #End user input assignments
     
     if (!is.null(input$WG_file) && !is.null(input$TRANS_file ) && noClicks==1){
-      
+
       createJobStatusBar() #Internal code found below
-      
+
       filtering <- paste(input$filtering, collapse="")
       script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
-      
+
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
     }
-    
     
     if (noClicks > 1){}
     
@@ -168,3 +163,23 @@ shinyServer(function(input, output,session){
     addTabToTabset(newTabPanels, "navbar")  
   } 
 })
+
+# #Build user JSON file
+# jsonData<- fromJSON("jobConfigBlank.txt")
+# 
+# jsonData$entrezIDS <- strsplit(input$WG_input,"\n")
+# jsonData$jobID <- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
+# jsonData$enrichmentType <- input$pathway
+# jsonData$thetaVal <- input$theta
+# jsonData$filtering <- input$filtering
+# jsonData$email<- input$email
+# jsonData$startCol<- input$col_start
+# jsonData$WG_file_path<- input$WG_file$datapath
+# jsonData$TRANS_file_path<- input$TRANS_file$datapath
+#   
+#   
+# write(toJSON(jsonData,
+#              null = "null",
+#              pretty = TRUE,
+#              auto_unbox = TRUE), 
+#       file = paste("users/","userData.txt",sep = ""))
