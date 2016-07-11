@@ -62,6 +62,20 @@ shinyUI(fluidPage( theme = "bootstrap.css",
              tabPanel("Home",
                       sidebarLayout(
                          sidebarPanel(
+                           radioButtons("id_or_wg", label = "INPUT SELECTION",
+                                        choices = list("Input WebGestalt .tsv output file" = "WG", 
+                                                       "Input Entrez gene IDs" = "Entrez"),
+                                        selected = "WG"),
+                           
+                           tags$textarea(id = "WG_input", rows=5, cols=27, placeholder = "Enter Entrez gene IDs. "),
+                           # textInput("WG_input", label = "WEBGESTALT INPUT", width = '100%', placeholder = "Enter gene ids."),
+                           
+                           fluidRow(
+                             actionButton("submit_entrez", "Submit Entrez IDs")
+                           ),
+                           
+                           tags$hr(),
+                           
                           tags$div(title="Please select a .tsv file.",
                             fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv')),
                           
