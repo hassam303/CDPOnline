@@ -35,13 +35,16 @@ shinyServer(function(input, output,session){
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
   observe({
-    # Disable textarea if input WG selected
-    toggleState("WG_input", input$id_or_wg != "WG")
+    # Disable textarea if input WG selected;  disable WG_file if Entrez selected
+    toggleState("Entrez_text", input$id_or_wg != "WG")
+    toggleState("Entrez_file", input$id_or_wg != "WG")
     
-    # Disable the Submit button if email, WG_file, TRANS_file, not inputted
+    toggleState("WG_file", input$id_or_wg != "Entrez")
+    
+    # Disable the Submit button if email, WG_file or Entrez file or Entrez text, TRANS_file, not inputted
     toggleState("submit", 
-                !is.null(input$email) && input$email != "" && !is.null(input$WG_file) && !is.null(input$TRANS_file) && input$theta != "")
-    
+      !is.null(input$email) && input$email != "" && (!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$WG_file != "") && !is.null(input$TRANS_file) && input$theta != "")
+   
     # Disable theta if no filter selected
     toggleState("theta", !is.null(input$filtering))
     
