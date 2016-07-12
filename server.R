@@ -15,7 +15,7 @@ shinyServer(function(input, output,session){
   #     write.table(read.delim("message.txt", sep = ":"),file)
   #   }
   # )
- 
+  
   # Important! : creationPool should be hidden to avoid elements flashing before they are moved.
   #              But hidden elements are ignored by shiny, unless this option below is set.
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
@@ -43,8 +43,8 @@ shinyServer(function(input, output,session){
     
     # Disable the Submit button if email, WG_file or Entrez file or Entrez text, TRANS_file, not inputted
     toggleState("submit", 
-      !is.null(input$email) && input$email != "" && (!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$WG_file != "") && !is.null(input$TRANS_file) && input$theta != "")
-   
+      !is.null(input$email) && input$email != "" && (!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$Entrez_text != "") && !is.null(input$TRANS_file) && input$theta != "")
+    
     # Disable theta if no filter selected
     toggleState("theta", !is.null(input$filtering))
     
@@ -55,16 +55,16 @@ shinyServer(function(input, output,session){
   observeEvent(input$submit, {
     noClicks <- input$submit
     
-    # Validate that numericinput is integer, >=2
-    validate(
-      need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
-    )
+    # # Validate that numericinput is integer, >=2
+    # validate(
+    #   need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
+    # )
     
     #Start user input assignments
     ##############################
     
     # if (input$pathway == 'Kegg') {
-   
+    
     workflow <- "KEGGWorkflow.R"
     # } else if (input$pathway == 'TF') {
     # workflow <- "TFWorkflow.R" 
@@ -73,13 +73,14 @@ shinyServer(function(input, output,session){
     
     #End user input assignments
     
-    if (!is.null(input$WG_file) && !is.null(input$TRANS_file ) && noClicks==1){
-
-      createJobStatusBar() #Internal code found below
-
+    if (!is.null(input$WG_file)  && !is.null(input$TRANS_file ) && noClicks==1){
+      # problem. new script for entrez files. !is.null(input$Entrez_file) || input$Entrez_text != "")
+      # Update scripts for TF, wiki. 
+      createJobStatusBar() #Internal code found below 
+      
       filtering <- paste(input$filtering, collapse="")
       script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
-
+      
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
     }
@@ -98,14 +99,14 @@ shinyServer(function(input, output,session){
       createResultsBar()#Internal code found below    
     }
   })
-
+  
   #Start code for SendEmailButton (in Results tab)
   observeEvent(input$sendEmailButton, {
     table = read.delim("message.txt", sep = ":")
-
+    
     topic = as.character(table$value[[1]])
     message = as.character(table$value[[2]])
-
+    
     send.mail(from = "hassam303@gmail.com",
               to = list("hassam303@gmail.com"),
               subject = topic,
@@ -118,7 +119,7 @@ shinyServer(function(input, output,session){
               authenticate = TRUE,
               debug = TRUE,
               send = TRUE)
-
+    
     output$mailSent <- renderText("Sent!")
   })
   #End code for SendEmailButton (in Results tab)
@@ -140,9 +141,9 @@ shinyServer(function(input, output,session){
                       
                       actionButton("jobReadyButton",
                                    "Go To Results")
-               )
+                      )
                ###End Job Status tab Layout###
-      )
+               )
     )    
     addTabToTabset(newTabPanels, "navbar")   
     
