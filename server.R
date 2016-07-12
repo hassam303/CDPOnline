@@ -63,27 +63,32 @@ shinyServer(function(input, output,session){
     #Start user input assignments
     ##############################
     
-    # if (input$pathway == 'Kegg') {
-    
-    workflow <- "KEGGWorkflow.R"
-    # } else if (input$pathway == 'TF') {
-    # workflow <- "TFWorkflow.R" 
-    # } else {
-    # workflow <- "WikiWorkflow.R" }
+    if (input$pathway == 'Kegg') {
+      workflow <- "KEGGWorkflow.R"
+    } else if (input$pathway == 'TF') {
+      workflow <- "TFWorkflow.R"
+    } else {
+      workflow <- "WikiWorkflow.R" }
+    # Each workflow should also be able to deal with accepting Entrez ids.
     
     #End user input assignments
     
-    if (!is.null(input$WG_file)  && !is.null(input$TRANS_file ) && noClicks==1){
-      # problem. new script for entrez files. !is.null(input$Entrez_file) || input$Entrez_text != "")
-      # Update scripts for TF, wiki. 
+    if ((!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$Entrez_text != "") && !is.null(input$TRANS_file ) && noClicks==1){
+
       createJobStatusBar() #Internal code found below 
       
       filtering <- paste(input$filtering, collapse="")
-      script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
       
+      if (!is.null(input$WG_file)) {
+        script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
+      } else if (!is.null(input$Entrez_file)) {
+        script <- paste("Rscript", workflow, input$Entrez_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
+      } else if (input$Entrez_text != "") {
+        script <- paste("Rscript", workflow, input$Entrez_text, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
+      }
       #Spawn asyncronous R process for the workflow
       system(script, wait=FALSE)
-    }
+    } 
     
     if (noClicks > 1){}
     
