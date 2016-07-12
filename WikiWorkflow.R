@@ -1,22 +1,25 @@
 #!/usr/bin/env Rscript
 library(ComplementaryDomainPrioritization)
 
-WikiWorkflow <- function(tsvFile, csvFile, startCol, filter = NULL, theta = NULL){
+WikiWorkflow <- function(tsvFile, csvFile, startCol, filtering, theta){
   
   wiki.pathways = load.WebGestalt(tsvFile, 'Wiki')
   Wikigene.ids = get.genes.wiki(wiki.pathways)
   
-  transc.rna = load.gene.data(csvFile,startCol)
+  startCol = as.numeric(startCol)
+  theta = as.numeric(theta)
+  
+  transc.rna = load.gene.data(csvFile, startCol)
   Wikiprioritized.data = list.filter(transc.rna$transposed.data,Wikigene.ids)
   
-  if (is.null(filter)) {
-    next
-  } else if (filter == 1) {
+  if (is.null(filtering) || filtering == "" || is.null(theta)) {
+    return(NULL)
+  } else if (filtering == "m") {
     Wikiprioritized.50meanfiltered.data = overall.mean.filter(Wikiprioritized.data, theta)
-  } else if (filter == 2) {
+  } else if (filtering == "v") {
     Wikiprioritized.50varfiltered.data = overall.var.filter(Wikiprioritized.data, theta)
-  } else {
-    Wikiprioritized.50meanfiltered.data = overall.mean.filter(WIkiprioritized.data, theta)
+  } else if (filtering == "mv") {
+    Wikiprioritized.50meanfiltered.data = overall.mean.filter(Wikiprioritized.data, theta)
     Wikiprioritized.50varfiltered.data = overall.var.filter(Wikiprioritized.data, theta)
     
   }
@@ -24,7 +27,7 @@ WikiWorkflow <- function(tsvFile, csvFile, startCol, filter = NULL, theta = NULL
 
 args <- commandArgs(trailingOnly = TRUE)
 
-WikiWorkflow(args[1], args[2], args[3])
+WikiWorkflow(args[1], args[2], args[3], args[4], args[5])
 
 print("Workflow Complete")
 
