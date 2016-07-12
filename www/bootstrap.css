@@ -1089,6 +1089,7 @@ body {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
   line-height: 1.42857143;
+  padding-top: 56px; /* Added space between navbar and content */
   color: #ebebeb;
   background-color: #2b3e50;
 }
@@ -3054,8 +3055,8 @@ select[multiple].input-lg {
 .btn[disabled],
 fieldset[disabled] .btn {
   cursor: not-allowed;
-  opacity: 0.65;
-  filter: alpha(opacity=65);
+  opacity: 0.01; /* disabled submit button is hidden */
+  filter: alpha(opacity=1); /* disabled submit button is hidden */
   -webkit-box-shadow: none;
   box-shadow: none;
 }
@@ -3987,7 +3988,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   display: block;
 }
 .nav > li > a {
-  position: relative;
+  position: relative; 
   display: block;
   padding: 10px 15px;
 }
@@ -4334,6 +4335,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding-bottom: 10px;
   line-height: 21px;
 }
+
 @media (max-width: 767px) {
   .navbar-nav .open .dropdown-menu {
     position: static;
@@ -4499,7 +4501,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-default {
-  background-color: #4e5d6c;
+  background-color: #63778a;
   border-color: transparent;
 }
 .navbar-default .navbar-brand {
