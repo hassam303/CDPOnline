@@ -35,15 +35,15 @@ shinyServer(function(input, output,session){
   # Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
   
   observe({
-    # Disable textarea if input WG selected;  disable WG_file if Entrez selected
-    toggleState("Entrez_text", input$id_or_wg != "WG")
-    toggleState("Entrez_file", input$id_or_wg != "WG")
+    # Disable textarea if input WG selected
+    toggleState("Entrez_text", input$id_or_wg != "WG" && is.null(input$Entrez_file$datapath) )
+    toggleState("Entrez_file", input$id_or_wg != "WG" && input$Entrez_text == "")
     
+    # Disable WG_file if Entrez selected
     toggleState("WG_file", input$id_or_wg != "Entrez")
     
     # Disable the Submit button if email, WG_file or Entrez file or Entrez text, TRANS_file, not inputted
-    toggleState("submit", 
-      !is.null(input$email) && input$email != "" && (!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$Entrez_text != "") && !is.null(input$TRANS_file) && input$theta != "")
+    toggleState("submit", checkGeneIDEntry() && input$email != "" && !is.null(input$TRANS_file$datapath) )
     
     # Disable theta if no filter selected
     toggleState("theta", !is.null(input$filtering))
@@ -51,7 +51,7 @@ shinyServer(function(input, output,session){
   })
   
   
-  #This button created the 'Job Status' Tab + job initiation logic
+  #This button creates the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
     
@@ -60,35 +60,55 @@ shinyServer(function(input, output,session){
     #   need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
     # )
     
-    #Start user input assignments
-    ##############################
+  
+    #Build user JSON file
+    jsonData<- fromJSON("jobConfigBlank.txt")
+    
+    jsonData$jobID <- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
+    jsonData$email<- input$email
+    jsonData$enrichmentType <- input$pathway
+    jsonData$thetaVal <- input$theta
+    jsonData$filtering <- paste(input$filtering, collapse="")
+    jsonData$startCol<- input$col_start
+    
+    if (input$Entrez_text != "" ){
+      jsonData$entrezIDs <- strsplit(input$Entrez_text,"\n")
+    }
+    if (!is.null(input$Entrez_file$datapath) ){
+      jsonData$Entrez_file_path<- input$Entrez_file$datapath
+    }
+    if (!is.null(input$WG_file$datapath) ){
+      jsonData$WG_file_path<- input$WG_file$datapath
+    }
+    if (!is.null(input$TRANS_file$datapath) ){
+      jsonData$TRANS_file_path<- input$TRANS_file$datapath
+      
+    }
+
+    #Create a folder to store temp job files 
+    newUserFolderPath <- paste("users/", jsonData$jobID, sep = "")
+    dir.create(newUserFolderPath)
+    
+
+    write(toJSON(jsonData, 
+                 na = "null",
+                 null = "null",
+                 pretty = TRUE,
+                 auto_unbox = TRUE),
+          file = paste(newUserFolderPath,"/userData.txt",sep = ""))
+
+    
+    
     
     if (input$pathway == 'Kegg') {
-      workflow <- "KEGGWorkflow.R"
+      createJobStatusBar(jsonData,workflow= "KEGGWorkflow.R" ) #Internal code found below 
     } else if (input$pathway == 'TF') {
-      workflow <- "TFWorkflow.R"
+      createJobStatusBar(jsonData,workflow= "TFWorkflow.R" ) #Internal code found below 
     } else {
-      workflow <- "WikiWorkflow.R" }
-    # Each workflow should also be able to deal with accepting Entrez ids.
+      createJobStatusBar(jsonData,workflow= "WikiWorkflow.R" ) #Internal code found below 
+    }
     
-    #End user input assignments
     
-    if ((!is.null(input$WG_file) || !is.null(input$Entrez_file) || input$Entrez_text != "") && !is.null(input$TRANS_file ) && noClicks==1){
-
-      createJobStatusBar() #Internal code found below 
-      
-      filtering <- paste(input$filtering, collapse="")
-      
-      if (!is.null(input$WG_file)) {
-        script <- paste("Rscript", workflow, input$WG_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
-      } else if (!is.null(input$Entrez_file)) {
-        script <- paste("Rscript", workflow, input$Entrez_file$datapath, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
-      } else if (input$Entrez_text != "") {
-        script <- paste("Rscript", workflow, input$Entrez_text, input$TRANS_file$datapath, input$col_start, filtering, input$theta)
-      }
-      #Spawn asyncronous R process for the workflow
-      system(script, wait=FALSE)
-    } 
     
     if (noClicks > 1){}
     
@@ -129,7 +149,7 @@ shinyServer(function(input, output,session){
   })
   #End code for SendEmailButton (in Results tab)
   
-  createJobStatusBar <- function(){
+  createJobStatusBar <- function(jsonData,workflow){
     
     newTabPanels <- list(
       tabPanel("Job Status", value = "Job",
@@ -142,15 +162,24 @@ shinyServer(function(input, output,session){
                       h4("Your job has been submitted to the server for processing. Below is 
                          your Job ID which can be used to return to the page to retrieve your
                          results (once they are ready) up to seven days after they are processed"),
-                      h3("Job ID: 000-000-000"),
+                      h3(paste("Job ID:", jsonData$jobID)),
                       
-                      actionButton("jobReadyButton",
-                                   "Go To Results")
+                      disabled(actionButton("jobReadyButton",
+                                            "Go To Results") ) 
                       )
                ###End Job Status tab Layout###
                )
     )    
-    addTabToTabset(newTabPanels, "navbar")   
+    addTabToTabset(newTabPanels, "navbar")
+    
+    
+    script <- paste("Rscript", workflow, paste("users/", jsonData$jobID,"/userData.txt",sep = ""))
+    
+    #Spawn asyncronous R process for the workflow
+    system(script, wait=FALSE)
+    
+    toggleState("jobReadyButton")
+    
     
   }
   
@@ -171,24 +200,26 @@ shinyServer(function(input, output,session){
     )  
     addTabToTabset(newTabPanels, "navbar")  
   } 
-})
 
-# #Build user JSON file
-# jsonData<- fromJSON("jobConfigBlank.txt")
-# 
-# jsonData$entrezIDS <- strsplit(input$WG_input,"\n")
-# jsonData$jobID <- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
-# jsonData$enrichmentType <- input$pathway
-# jsonData$thetaVal <- input$theta
-# jsonData$filtering <- input$filtering
-# jsonData$email<- input$email
-# jsonData$startCol<- input$col_start
-# jsonData$WG_file_path<- input$WG_file$datapath
-# jsonData$TRANS_file_path<- input$TRANS_file$datapath
-#   
-#   
-# write(toJSON(jsonData,
-#              null = "null",
-#              pretty = TRUE,
-#              auto_unbox = TRUE), 
-#       file = paste("users/","userData.txt",sep = ""))
+  
+  checkGeneIDEntry <- function(){
+    
+    entrez <- FALSE
+    webG <- FALSE
+    
+    if (input$id_or_wg == "Entrez" && trimws(input$Entrez_text, which = "both") != ""){ 
+      entrez <- TRUE
+    }
+    
+    else{
+      if ( !is.null(input$WG_file$datapath) ) {  
+        webG <- TRUE  
+      }
+    }
+    
+    return(entrez || webG)
+  }
+  
+  
+  
+  })
