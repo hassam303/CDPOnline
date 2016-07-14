@@ -1,5 +1,5 @@
 library(shiny)
-library(mailR)
+library(sendmailR)
 library(DBI)
 library(shinyjs)
 require(parallel)
@@ -8,6 +8,9 @@ require(jsonlite)
 options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from user input
 
 shinyServer(function(input, output,session){
+  
+  jsonData<- fromJSON("jobConfigBlank.txt")
+  
   
   # output$dlButton <- downloadHandler(
   #   filename = "downloadedFile",
@@ -50,7 +53,6 @@ shinyServer(function(input, output,session){
     
   })
   
-  
   #This button creates the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
@@ -60,15 +62,12 @@ shinyServer(function(input, output,session){
     #   need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
     # )
     
-  
     #Build user JSON file
-    jsonData<- fromJSON("jobConfigBlank.txt")
-    
-    jsonData$jobID <- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
+    jsonData$jobID<- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
     jsonData$email<- input$email
     jsonData$enrichmentType <- input$pathway
-    jsonData$thetaVal <- input$theta
-    jsonData$filtering <- paste(input$filtering, collapse="")
+    jsonData$thetaVal<- input$theta
+    jsonData$filtering<- paste(input$filtering, collapse="")
     jsonData$startCol<- input$col_start
     
     if (input$Entrez_text != "" ){
@@ -89,7 +88,7 @@ shinyServer(function(input, output,session){
     newUserFolderPath <- paste("users/", jsonData$jobID, sep = "")
     dir.create(newUserFolderPath)
     
-
+    #Save JSON file to temp job folder 
     write(toJSON(jsonData, 
                  na = "null",
                  null = "null",
@@ -97,18 +96,17 @@ shinyServer(function(input, output,session){
                  auto_unbox = TRUE),
           file = paste(newUserFolderPath,"/userData.txt",sep = ""))
 
+    #Create new JobStatusTab
+    createJobStatusBar()
     
+    #Determine workflow to be and pass argument to JobStatus page 
+    workflowScript <- paste(input$pathway,"Workflow.R",sep="")
     
-    
-    if (input$pathway == 'Kegg') {
-      createJobStatusBar(jsonData,workflow= "KEGGWorkflow.R" ) #Internal code found below 
-    } else if (input$pathway == 'TF') {
-      createJobStatusBar(jsonData,workflow= "TFWorkflow.R" ) #Internal code found below 
-    } else {
-      createJobStatusBar(jsonData,workflow= "WikiWorkflow.R" ) #Internal code found below 
-    }
-    
-    
+    #Spawn asyncronous R process for the workflow
+    # system2("Rscript", 
+    #         args = c(workflowScript,paste("users/", jsonData$jobID,"/userData.txt",sep ="")),
+    #         wait = FALSE)
+    # 
     
     if (noClicks > 1){}
     
@@ -132,29 +130,22 @@ shinyServer(function(input, output,session){
     topic = as.character(table$value[[1]])
     message = as.character(table$value[[2]])
     
-    send.mail(from = "hassam303@gmail.com",
-              to = list("hassam303@gmail.com"),
-              subject = topic,
-              body = message,
-              smtp = list(host.name = "smtp.gmail.com",
-                          port = 465,
-                          user.name = "hassam303@gmail.com",
-                          passwd = "Sammyandtom",
-                          ssl = TRUE),
-              authenticate = TRUE,
-              debug = TRUE,
-              send = TRUE)
+    
+    sendmail(from = "hassam303@gmail.com", 
+             to = c("hassamsolano@gmail.com"), 
+             subject = topic, 
+             msg = message,
+             control=list(smtpServer="relay.cougars.int"))
     
     output$mailSent <- renderText("Sent!")
   })
   #End code for SendEmailButton (in Results tab)
   
-  createJobStatusBar <- function(jsonData,workflow){
+  createJobStatusBar <- function(){
     
     newTabPanels <- list(
       tabPanel("Job Status", value = "Job",
                ###Start Job Status tab Layout###
-               
                column(3),
                column(7, align = "center", 
                       
@@ -164,23 +155,13 @@ shinyServer(function(input, output,session){
                          results (once they are ready) up to seven days after they are processed"),
                       h3(paste("Job ID:", jsonData$jobID)),
                       
-                      disabled(actionButton("jobReadyButton",
-                                            "Go To Results") ) 
+                      actionButton("jobReadyButton",
+                                    "Go To Results")
                       )
                ###End Job Status tab Layout###
                )
     )    
     addTabToTabset(newTabPanels, "navbar")
-    
-    
-    script <- paste("Rscript", workflow, paste("users/", jsonData$jobID,"/userData.txt",sep = ""))
-    
-    #Spawn asyncronous R process for the workflow
-    system(script, wait=FALSE)
-    
-    toggleState("jobReadyButton")
-    
-    
   }
   
   createResultsBar <- function(){
@@ -201,7 +182,6 @@ shinyServer(function(input, output,session){
     addTabToTabset(newTabPanels, "navbar")  
   } 
 
-  
   checkGeneIDEntry <- function(){
     
     entrez <- FALSE
