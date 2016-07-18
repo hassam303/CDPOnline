@@ -61,6 +61,7 @@ navbarPage("CDP Online",
           ###Start Home Layout###
           tabPanel("Home",
                    sidebarLayout(
+                     
                      sidebarPanel(
                        radioButtons("id_or_wg", label = "INPUT SELECTION",
                                     choices = list("Input Entrez gene IDs" = "Entrez",
@@ -69,11 +70,16 @@ navbarPage("CDP Online",
                        
                        tags$hr(),
                        
+                       radioButtons("Entrez_type", label = "ENTREZ GENE ID FORMAT",
+                                    choices = list("Newline-separated" = "newline", 
+                                                   "Comma-separated" = "comma",
+                                                   "Tab-separated" = "tab")),
+                       
                        tags$textarea(id = "Entrez_text", rows=5, cols=27, placeholder = "Paste Entrez gene IDs or choose a file."),
                        # textInput("WG_input", label = "WEBGESTALT INPUT", width = '100%', placeholder = "Enter gene ids."),
                        
                        tags$div(title = "Please select a .txt Entrez gene ID file.",
-                                fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", accept = '.txt')),
+                                fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", accept = '.txt, .csv, .tsv')),
                        
                        tags$div(title="Please select a .tsv file.",
                                 fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv')),
@@ -115,6 +121,16 @@ navbarPage("CDP Online",
                      ),
                      
                      mainPanel(
+                       tags$div(title = "Enter your job ID to view and download results.",
+                         div(style = "display:inline-block;vertical-align:top;", actionButton("submit_jobid", "Submit"), 
+                             style="float:right"),
+                         div(style = "display:inline-block;vertical-align:top;", 
+                           textInput("jobid_textbox", label = NULL, width = "160px", placeholder = "Job ID"), 
+                           style = "float:right")),
+                      
+                       br(), 
+                       br(),
+                      
                        h3("Stage 1: Gene List Generation"),
                        h4("Enrichment Analysis with WebGestalt"),
                        br(),
