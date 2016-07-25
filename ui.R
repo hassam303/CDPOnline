@@ -63,28 +63,43 @@ navbarPage("CDP Online",
                    sidebarLayout(
                      
                      sidebarPanel(
-                       radioButtons("id_or_wg", label = "INPUT SELECTION",
+                       selectInput("id_or_wg", label = "PROTEOMIC INPUT SELECTION",
                                     choices = list("Input Entrez gene IDs" = "Entrez",
                                                    "Input WebGestalt .tsv output file" = "WG"),
                                     selected = "Entrez"),
-                       
                        tags$hr(),
                        
-                       radioButtons("Entrez_type", label = "ENTREZ GENE ID FORMAT",
+                       ##### Hide Entrez when WG selected
+                       conditionalPanel('input.id_or_wg == "Entrez"',
+                       selectInput("Entrez_type", label = "ENTREZ GENE ID FORMAT",
                                     choices = list("Newline-separated" = "newline", 
                                                    "Comma-separated" = "comma",
-                                                   "Tab-separated" = "tab")),
+                                                   "Tab-separated" = "tab"), selected = NULL)),
                        
-                       tags$textarea(id = "Entrez_text", rows=5, cols=27, placeholder = "Paste Entrez gene IDs or choose a file."),
-                       # textInput("WG_input", label = "WEBGESTALT INPUT", width = '100%', placeholder = "Enter gene ids."),
+                       conditionalPanel('input.id_or_wg == "Entrez"',              
+                       tags$textarea(id = "Entrez_text", rows=5, cols=27, 
+                                     placeholder = "Paste Entrez gene IDs or choose a file.")),
                        
+                       conditionalPanel('input.id_or_wg == "Entrez"',
                        tags$div(title = "Please select a .txt Entrez gene ID file.",
-                                fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", accept = '.txt, .csv, .tsv')),
+                                fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", 
+                                          accept = '.txt, .csv, .tsv'))),
+                       ##### Hide WG when Entrez selected
                        
+                       conditionalPanel('input.id_or_wg == "WG"',
+                       selectInput("cutoff", label = "SIGNIFICANCE LEVEL", 
+                                   choices = c("Top10",0.1, 0.001, 0.0001, 0.00001, 0.000001, 0.02, 0.05, 0.1),
+                                   selected = "Top10")),
+                       
+                       conditionalPanel('input.id_or_wg == "WG"',
+                       selectInput("min", label = "MINIMUM NUMBER OF GENES FOR A CATEGORY",
+                                   choices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), selected = 2)),
+                       
+                       conditionalPanel('input.id_or_wg == "WG"',
                        tags$div(title="Please select a .tsv file.",
-                                fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv')),
+                                fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv'))),
                        
-                       radioButtons("pathway", label = "ENRICHMENT PATHWAY", 
+                       selectInput("pathway", label = "ENRICHMENT PATHWAY", 
                                     choices = list("KEGG" = "Kegg", 
                                                    "Transcription Factor" = "TF", 
                                                    "WikiPathways" = "Wiki"), 
