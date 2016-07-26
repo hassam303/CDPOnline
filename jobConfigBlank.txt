@@ -8,6 +8,8 @@
 "entrezIDs":null,
 "filtering":null,
 "startCol":null,
+"min":null,
+"cutoff":null,
 "Entrez_file_path":null,
 "WG_file_path":null,
 "TRANS_file_path":null
