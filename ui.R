@@ -76,24 +76,25 @@ navbarPage("CDP Online",
                                                    "Comma-separated" = "comma",
                                                    "Tab-separated" = "tab"), selected = NULL)),
                        
+                       conditionalPanel('input.id_or_wg == "Entrez"',
+                                        selectInput("cutoff", label = "SIGNIFICANCE LEVEL", 
+                                                    choices = c("Top10",0.1, 0.001, 0.0001, 0.00001, 0.000001, 0.02, 0.05, 0.1),
+                                                    selected = "Top10")),
+                       
+                       conditionalPanel('input.id_or_wg == "Entrez"',
+                                        selectInput("min", label = "MINIMUM NUMBER OF GENES FOR A CATEGORY",
+                                                    choices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), selected = 2)),
+                       
                        conditionalPanel('input.id_or_wg == "Entrez"',              
                        tags$textarea(id = "Entrez_text", rows=5, cols=27, 
                                      placeholder = "Paste Entrez gene IDs or choose a file.")),
                        
                        conditionalPanel('input.id_or_wg == "Entrez"',
-                       tags$div(title = "Please select a .txt Entrez gene ID file.",
+                       tags$div(title = "Please select an Entrez gene ID file.",
                                 fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", 
                                           accept = '.txt, .csv, .tsv'))),
+                       
                        ##### Hide WG when Entrez selected
-                       
-                       conditionalPanel('input.id_or_wg == "WG"',
-                       selectInput("cutoff", label = "SIGNIFICANCE LEVEL", 
-                                   choices = c("Top10",0.1, 0.001, 0.0001, 0.00001, 0.000001, 0.02, 0.05, 0.1),
-                                   selected = "Top10")),
-                       
-                       conditionalPanel('input.id_or_wg == "WG"',
-                       selectInput("min", label = "MINIMUM NUMBER OF GENES FOR A CATEGORY",
-                                   choices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), selected = 2)),
                        
                        conditionalPanel('input.id_or_wg == "WG"',
                        tags$div(title="Please select a .tsv file.",
