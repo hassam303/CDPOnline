@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 library(ComplementaryDomainPrioritization)
 
-WikiWorkflow <- function(tsvFile, csvFile, startCol, filtering, theta){
+WikiWorkflow <- function(jsonLoc){
   
   wiki.pathways = load.WebGestalt(tsvFile, 'Wiki')
   Wikigene.ids = get.genes.wiki(wiki.pathways)
@@ -27,7 +27,7 @@ WikiWorkflow <- function(tsvFile, csvFile, startCol, filtering, theta){
 
 args <- commandArgs(trailingOnly = TRUE)
 
-WikiWorkflow(args[1], args[2], args[3], args[4], args[5])
+WikiWorkflow(args[1])
 
 print("Workflow Complete")
 

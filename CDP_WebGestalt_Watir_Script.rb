@@ -3,23 +3,18 @@
 #
 
 
-##Planning: Use JSON file to transer over data from main workflow
-
-
-
 require 'watir-webdriver'
 require 'headless'
 require "open-uri"
 require "json"
 Watir.default_timeout = 300
 
-
-file = File.read("#{Dir.pwd}/users" + "/userData.txt")
+file = File.read("#{Dir.pwd}/users/" + ARGV[0] +"/userData.txt")
 userData = JSON.parse(file)
 
+JSON>
 
-
-DOWNLOAD_PATH = "#{Dir.pwd}/downloads" + "/test.tsv" #REPLACE text.tsv w/ "JSON:jobID"
+DOWNLOAD_PATH = "#{Dir.pwd}/users/" + ARGV[0]+ "/webGResults.tsv" #REPLACE text.tsv w/ "JSON:jobID"
 ENTREZ_IDS = userData['entrezIDs']
 
 
@@ -76,6 +71,17 @@ end
 
 b.close
 headless.destroy
+
+
+userData['WG_file_path'] = DOWNLOAD_PATH
+
+puts userData.to_json
+
+File.open(file,'w') do |f|
+  f << JSON.pretty_generate(userData)
+end
+
+
 
 
 

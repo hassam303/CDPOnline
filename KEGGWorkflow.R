@@ -1,32 +1,96 @@
 #!/usr/bin/env Rscript
-library(ComplementaryDomainPrioritization)
+require(ComplementaryDomainPrioritization)
+require(jsonlite)
+require(sendmailR)
 
-KEGGWorkflow <- function(tsvFile, csvFile, startCol, filtering, theta){
+KEGGWorkflow <- function(){
   
-  kegg.pathways = load.WebGestalt(tsvFile, 'Kegg')
+  # Get WebGestalt Data if needed 
+  if (length(userData$WG_file_path) == 0){
+    system2("irb",
+            args = c("CDP_WebGestalt_Watir_Script.rb",userData$jobID),
+            wait = TRUE)
+    userData <- fromJSON(args[1])
+  }
+  
+  kegg.pathways = load.WebGestalt(userData$WG_file_path, 'Kegg')
   KEGGgene.ids = get.genes.kegg(kegg.pathways)
   
-  startCol = as.numeric(startCol)
-  theta = as.numeric(theta)
+  startCol = userData$startCol
+  theta = userData$theta
+  filtering = userData$filtering
   
-  transc.rna = load.gene.data(csvFile, startCol) 
+  transc.rna = load.gene.data(userData$TRANS_file_path, startCol) 
   KEGGprioritized.data = list.filter(transc.rna$transposed.data,KEGGgene.ids)
   
-  if (is.null(filtering) || filtering == "" || is.null(theta)) {
-    return(NULL)
-  } else if (filtering == "m") { 
+  resultFile  = paste("users/", userData$jobID,"/prioritizedData.csv",sep ="")
+  
+  write.table(KEGGprioritized.data,
+              resultFile,
+              sep = ",",
+              append = FALSE)
+  
+  fixResultsFile(resultFile)
+  
+  if (is.null(filtering) || filtering == "" || is.null(theta)) {} 
+  else if (filtering == "m") { 
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
-  } else if (filtering == "v") {
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+
+    write.table(KEGGprioritized.50meanfiltered.data,
+                meanResultFile,
+                sep = ",",
+                append = FALSE)
+    
+    fixResultsFile(meanResultFile)
+      
+  } 
+  else if (filtering == "v") {
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-  } else if (filtering == "mv") {
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
+    
+    write.table(KEGGprioritized.50varfiltered.data,
+                varResultFile,
+                sep = ",",
+                append = FALSE)
+    
+    fixResultsFile(varResultFile)
+    
+  } 
+  else if (filtering == "mv") {
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+    
+    write.table(KEGGprioritized.50meanfiltered.data,
+                   meanResultFile,
+                   sep = ",",
+                   append = FALSE)
+    
+    write.table(KEGGprioritized.50varfiltered.data,
+                varResultFile,
+                sep = ",",
+                append = FALSE)
+    
+    fixResultsFile(varResultFile)
+    fixResultsFile(meanResultFile)
   }
 }
 
-args <- commandArgs(trailingOnly = TRUE)
+fixResultsFile <- function(filePath){
+ system2("irb", 
+         args = c("fixResults.rb", filePath),
+         wait = TRUE,
+         stdout = NULL)
+}
 
-KEGGWorkflow(args[1], args[2], args[3], args[4], args[5])
+
+
+args <- commandArgs(trailingOnly = TRUE)
+userData <- fromJSON(args[1])
+
+KEGGWorkflow()
 
 print("Workflow Complete")
 

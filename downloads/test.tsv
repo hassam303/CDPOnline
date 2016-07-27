@@ -1,0 +1,277 @@
+User data and parameters: User data: textAreaUpload.txt, Organism: hsapiens, Id Type: entrezgene, Ref Set: entrezgene_protein-coding, Significance Level: .05, Statistics Test: Hypergeometric, MTC: BH, Minimum: 5
+
+The results for the enriched KEGG pathways are listed in this table. For each pathway, the first row lists its KEGG pathway
+name, and corresponding KEGG ID. The second row lists
+number of reference genes in the category (C), number of genes in the gene set and also in the category (O), expected number in the
+category (E), Ratio of enrichment (R), p value from hypergeometric test (rawP), and p value adjusted by the multiple test adjustment (adjP).
+Finally, genes in the pathway are listed. For each gene, the table lists the user uploaded ID and value (optional), Entrez ID,
+Ensembl Gene Stable ID, Gene symbol, and description.
+
+
+KEGG pathway	Fatty acid metabolism	00071
+C=43;O=13;E=0.12;R=109.50;rawP=4.14e-24;adjP=6.21e-23
+35	NA	ACADS	acyl-CoA dehydrogenase, C-2 to C-3 short chain	35	ENSG00000122971
+
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+39	NA	ACAT2	acetyl-CoA acetyltransferase 2	39	ENSG00000120437
+
+36	NA	ACADSB	acyl-CoA dehydrogenase, short/branched chain	36	ENSG00000196177
+
+51	NA	ACOX1	acyl-CoA oxidase 1, palmitoyl	51	ENSG00000161533
+
+38	NA	ACAT1	acetyl-CoA acetyltransferase 1	38	ENSG00000075239
+
+34	NA	ACADM	acyl-CoA dehydrogenase, C-4 to C-12 straight chain	34	ENSG00000117054
+
+37	NA	ACADVL	acyl-CoA dehydrogenase, very long chain	37	ENSG00000072778
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+30	NA	ACAA1	acetyl-CoA acyltransferase 1	30	ENSG00000060971
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Metabolic pathways	01100
+C=1130;O=23;E=3.12;R=7.37;rawP=6.24e-15;adjP=4.68e-14
+35	NA	ACADS	acyl-CoA dehydrogenase, C-2 to C-3 short chain	35	ENSG00000122971
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+48	NA	ACO1	aconitase 1, soluble	48	ENSG00000122729
+
+18	NA	ABAT	4-aminobutyrate aminotransferase	18	ENSG00000183044
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+30	NA	ACAA1	acetyl-CoA acyltransferase 1	30	ENSG00000060971
+
+100	NA	ADA	adenosine deaminase	100	ENSG00000196839
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+50	NA	ACO2	aconitase 2, mitochondrial	50	ENSG00000100412
+
+28	NA	ABO	ABO blood group (transferase A, alpha 1-3-N-acetylgalactosaminyltransferase; transferase B, alpha 1-3-galactosyltransferase)	28	NULL
+
+39	NA	ACAT2	acetyl-CoA acetyltransferase 2	39	ENSG00000120437
+
+95	NA	ACY1	aminoacylase 1	95	ENSG00000243989,ENSG00000114786
+
+36	NA	ACADSB	acyl-CoA dehydrogenase, short/branched chain	36	ENSG00000196177
+
+51	NA	ACOX1	acyl-CoA oxidase 1, palmitoyl	51	ENSG00000161533
+
+9	NA	NAT1	N-acetyltransferase 1 (arylamine N-acetyltransferase)	9	ENSG00000171428
+
+47	NA	ACLY	ATP citrate lyase	47	ENSG00000131473
+
+38	NA	ACAT1	acetyl-CoA acetyltransferase 1	38	ENSG00000075239
+
+34	NA	ACADM	acyl-CoA dehydrogenase, C-4 to C-12 straight chain	34	ENSG00000117054
+
+37	NA	ACADVL	acyl-CoA dehydrogenase, very long chain	37	ENSG00000072778
+
+132	NA	ADK	adenosine kinase	132	ENSG00000156110
+
+31	NA	ACACA	acetyl-CoA carboxylase alpha	31	ENSG00000132142
+
+
+KEGG pathway	Valine, leucine and isoleucine degradation	00280
+C=44;O=7;E=0.12;R=57.62;rawP=2.94e-11;adjP=1.47e-10
+38	NA	ACAT1	acetyl-CoA acetyltransferase 1	38	ENSG00000075239
+
+35	NA	ACADS	acyl-CoA dehydrogenase, C-2 to C-3 short chain	35	ENSG00000122971
+
+34	NA	ACADM	acyl-CoA dehydrogenase, C-4 to C-12 straight chain	34	ENSG00000117054
+
+39	NA	ACAT2	acetyl-CoA acetyltransferase 2	39	ENSG00000120437
+
+18	NA	ABAT	4-aminobutyrate aminotransferase	18	ENSG00000183044
+
+36	NA	ACADSB	acyl-CoA dehydrogenase, short/branched chain	36	ENSG00000196177
+
+30	NA	ACAA1	acetyl-CoA acyltransferase 1	30	ENSG00000060971
+
+
+KEGG pathway	Adherens junction	04520
+C=73;O=7;E=0.20;R=34.73;rawP=1.17e-09;adjP=4.39e-09
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+52	NA	ACP1	acid phosphatase 1, soluble	52	ENSG00000143727
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+KEGG pathway	Propanoate metabolism	00640
+C=32;O=5;E=0.09;R=56.59;rawP=2.54e-08;adjP=7.62e-08
+38	NA	ACAT1	acetyl-CoA acetyltransferase 1	38	ENSG00000075239
+
+34	NA	ACADM	acyl-CoA dehydrogenase, C-4 to C-12 straight chain	34	ENSG00000117054
+
+39	NA	ACAT2	acetyl-CoA acetyltransferase 2	39	ENSG00000120437
+
+18	NA	ABAT	4-aminobutyrate aminotransferase	18	ENSG00000183044
+
+31	NA	ACACA	acetyl-CoA carboxylase alpha	31	ENSG00000132142
+
+
+KEGG pathway	Arrhythmogenic right ventricular cardiomyopathy (ARVC)	05412
+C=74;O=6;E=0.20;R=29.37;rawP=5.39e-08;adjP=1.35e-07
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+KEGG pathway	Tyrosine metabolism	00350
+C=41;O=5;E=0.11;R=44.17;rawP=9.28e-08;adjP=1.99e-07
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Retinol metabolism	00830
+C=64;O=5;E=0.18;R=28.30;rawP=9.00e-07;adjP=1.46e-06
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Leukocyte transendothelial migration	04670
+C=116;O=6;E=0.32;R=18.73;rawP=7.90e-07;adjP=1.46e-06
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+KEGG pathway	Glycolysis / Gluconeogenesis	00010
+C=65;O=5;E=0.18;R=27.86;rawP=9.73e-07;adjP=1.46e-06
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Metabolism of xenobiotics by cytochrome P450	00980
+C=71;O=5;E=0.20;R=25.51;rawP=1.51e-06;adjP=2.01e-06
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Drug metabolism - cytochrome P450	00982
+C=73;O=5;E=0.20;R=24.81;rawP=1.74e-06;adjP=2.01e-06
+128	NA	ADH5	alcohol dehydrogenase 5 (class III), chi polypeptide	128	ENSG00000197894
+
+130	NA	ADH6	alcohol dehydrogenase 6 (class V)	130	ENSG00000172955
+
+127	NA	ADH4	alcohol dehydrogenase 4 (class II), pi polypeptide	127	ENSG00000198099
+
+125	NA	ADH1B	alcohol dehydrogenase 1B (class I), beta polypeptide	125	ENSG00000196616
+
+126	NA	ADH1C	alcohol dehydrogenase 1C (class I), gamma polypeptide	126	ENSG00000248144
+
+
+KEGG pathway	Tight junction	04530
+C=132;O=6;E=0.36;R=16.46;rawP=1.69e-06;adjP=2.01e-06
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+KEGG pathway	Focal adhesion	04510
+C=200;O=6;E=0.55;R=10.87;rawP=1.84e-05;adjP=1.97e-05
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+KEGG pathway	Regulation of actin cytoskeleton	04810
+C=212;O=6;E=0.59;R=10.25;rawP=2.55e-05;adjP=2.55e-05
+81	NA	ACTN4	actinin, alpha 4	81	ENSG00000130402
+
+60	NA	ACTB	actin, beta	60	ENSG00000075624
+
+87	NA	ACTN1	actinin, alpha 1	87	ENSG00000072110
+
+88	NA	ACTN2	actinin, alpha 2	88	ENSG00000077522
+
+71	NA	ACTG1	actin, gamma 1	71	ENSG00000184009
+
+89	NA	ACTN3	actinin, alpha 3	89	NULL
+
+
+
+

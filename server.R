@@ -2,8 +2,10 @@ library(shiny)
 library(sendmailR)
 library(DBI)
 library(shinyjs)
+library(metabologram)
 require(parallel)
 require(jsonlite)
+source("ui.R")
 
 options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from user input
 
@@ -97,16 +99,16 @@ shinyServer(function(input, output,session){
           file = paste(newUserFolderPath,"/userData.txt",sep = ""))
 
     #Create new JobStatusTab
-    createJobStatusBar()
+    addTabToTabset(createJobStatusBar(jsonData$jobID), "navbar")
     
     #Determine workflow to be and pass argument to JobStatus page 
     workflowScript <- paste(input$pathway,"Workflow.R",sep="")
     
     #Spawn asyncronous R process for the workflow
-    # system2("Rscript", 
-    #         args = c(workflowScript,paste("users/", jsonData$jobID,"/userData.txt",sep ="")),
-    #         wait = FALSE)
-    # 
+    system2("Rscript",
+            args = c(workflowScript,paste("users/", jsonData$jobID,"/userData.txt",sep ="")),
+            wait = FALSE)
+
     
     if (noClicks > 1){}
     
@@ -119,7 +121,70 @@ shinyServer(function(input, output,session){
     if (noClicks > 1 ){}
     
     if (noClicks == 1){
-      createResultsBar()#Internal code found below    
+      addTabToTabset(createResultsBar(),"navbar")   
+      
+      
+      sampleMetabologramData <- list(
+        list(
+          name="Metabolites",
+          colour="#FFDDDD",
+          children=list(
+            list(name="M_1", colour="#0000FF"),
+            list(name="M_5", colour="#F3F3FF"),
+            list(name="M_9", colour="#FFF3F3"),
+            list(name="M_b", colour="#FFDDDD"),
+            list(name="M_f", colour="#FF8585")
+          )
+        ),
+        list(
+          name="Genes",
+          colour="#FF6E6E",
+          children=list(
+            list(name="G_1", colour="#B1B1FF"),
+            list(name="G_3", colour="#DDDDFF"),
+            list(name="G_5", colour="#F3F3FF"),
+            list(name="G_7", colour="#FF6E6E"),
+            list(name="G_9", colour="#8585FF"),
+            list(name="G_b", colour="#FF1616"),
+            list(name="G_d", colour="#FF6E6E"),
+            list(name="G_f", colour="#FF0000")
+          )
+        )
+      )
+      
+      sampleMetabologramBreaks <- c(
+        -3.00, -2.75, -2.50, -2.25, -2.00, -1.75, -1.50, -1.25, -1.00, 
+        -0.75, -0.50, -0.25, 0.00,  0.25,  0.50,  0.75,  1.00,  
+        1.25,  1.50,  1.75,  2.00,  2.25,  2.50,  2.75, 3.00
+      )
+      
+      sampleMetabologramColors <- c(
+        "#0000FF", "#1616FF", "#2C2CFF", "#4242FF", "#5858FF", "#6E6EFF", "#8585FF",
+        "#9B9BFF", "#B1B1FF", "#C7C7FF", "#DDDDFF", "#F3F3FF", "#FFF3F3", "#FFDDDD",
+        "#FFC7C7", "#FFB1B1", "#FF9B9B", "#FF8585", "#FF6E6E", "#FF5858", "#FF4242",
+        "#FF2C2C", "#FF1616", "#FF0000"
+      )
+      
+      output$metabologram <- renderMetabologram({
+        
+        metabologram(
+          sampleMetabologramData, 
+          width=600, 
+          height=500, 
+          main="Sample Metabologram",
+          showLegend=TRUE,
+          fontSize=12,
+          legendBreaks=sampleMetabologramBreaks,
+          legendColors=sampleMetabologramColors,
+          legendText="Legend Title"
+        )
+        
+    
+      })  
+      
+      
+      
+      
     }
   })
   
@@ -141,46 +206,31 @@ shinyServer(function(input, output,session){
   })
   #End code for SendEmailButton (in Results tab)
   
-  createJobStatusBar <- function(){
+ 
+  observeEvent(input$submit_jobid,{
+    if(input$jobid_textbox == "" || is.null(input$jobid_textbox) ){
+      
+    }
+    else{
+      dir <- gsub("users/",replacement ="", x= list.dirs(path="users"))
+      #Check for folder exsistence 
+      if (length(grep(input$jobid_textbox, x = dir)) > 0){
+        wd <- paste("users/",input$jobid_textbox,sep ="")
+        
+        #Load user data
+        jsonData<- fromJSON(paste(wd,"/userData.txt",sep =""))
+        addTabToTabset(createJobStatusBar(jsonData$jobID), "navbar")
+      }
+      
+      else {
+        
+      }
+      
+    }
     
-    newTabPanels <- list(
-      tabPanel("Job Status", value = "Job",
-               ###Start Job Status tab Layout###
-               column(3),
-               column(7, align = "center", 
-                      
-                      h3("Your Job Has Been Submitted!"),
-                      h4("Your job has been submitted to the server for processing. Below is 
-                         your Job ID which can be used to return to the page to retrieve your
-                         results (once they are ready) up to seven days after they are processed"),
-                      h3(paste("Job ID:", jsonData$jobID)),
-                      
-                      actionButton("jobReadyButton",
-                                    "Go To Results")
-                      )
-               ###End Job Status tab Layout###
-               )
-    )    
-    addTabToTabset(newTabPanels, "navbar")
-  }
+  })
   
-  createResultsBar <- function(){
-    
-    newTabPanels <- list(
-      tabPanel("Results",
-               ###Start Results Layout###
-               
-               h3("All kinds of cool results will be displayed here! Exciting"),
-               downloadButton("download_priori", "Download prioritized data"),
-               br(),
-               textOutput("mailSent"), 
-               actionButton("sendEmailButton", "Send Email")
-               
-               ###End Results Layout###
-      )    
-    )  
-    addTabToTabset(newTabPanels, "navbar")  
-  } 
+ 
 
   checkGeneIDEntry <- function(){
     

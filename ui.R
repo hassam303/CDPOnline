@@ -1,4 +1,6 @@
 library(shiny)
+library(metabologram)
+library(htmlwidgets)
 
 shinyUI(fluidPage( theme = "bootstrap.css", 
 # Important! : JavaScript functionality to add the Tabs
@@ -67,43 +69,47 @@ navbarPage("CDP Online",
                                     choices = list("Input Entrez gene IDs" = "Entrez",
                                                    "Input WebGestalt .tsv output file" = "WG"),
                                     selected = "Entrez"),
+                       
+                       selectInput("pathway", label = "ENRICHMENT PATHWAY", 
+                                   choices = list("KEGG" = "Kegg", 
+                                                  "Transcription Factor" = "TF", 
+                                                  "WikiPathways" = "Wiki"), 
+                                   selected="Kegg"),
+                       
                        tags$hr(),
                        
                        ##### Hide Entrez when WG selected
                        conditionalPanel('input.id_or_wg == "Entrez"',
-                       selectInput("Entrez_type", label = "ENTREZ GENE ID FORMAT",
-                                    choices = list("Newline-separated" = "newline", 
-                                                   "Comma-separated" = "comma",
-                                                   "Tab-separated" = "tab"), selected = NULL)),
+                                        selectInput("Entrez_type", label = "ENTREZ GENE ID FORMAT",
+                                                    choices = list("Newline-separated" = "newline", 
+                                                                   "Comma-separated" = "comma",
+                                                                   "Tab-separated" = "tab"), selected = NULL)),
                        
                        conditionalPanel('input.id_or_wg == "Entrez"',              
-                       tags$textarea(id = "Entrez_text", rows=5, cols=27, 
-                                     placeholder = "Paste Entrez gene IDs or choose a file.")),
+                                        tags$textarea(id = "Entrez_text", rows=5, cols=27, 
+                                                      placeholder = "Paste Entrez gene IDs or choose a file.")),
                        
                        conditionalPanel('input.id_or_wg == "Entrez"',
-                       tags$div(title = "Please select a .txt Entrez gene ID file.",
-                                fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", 
-                                          accept = '.txt, .csv, .tsv'))),
+                                        tags$div(title = "Please select an Entrez gene ID file.",
+                                                 fileInput("Entrez_file", label="ENTREZ GENE ID INPUT", 
+                                                           accept = '.txt, .csv, .tsv'))),
+                       
+                       conditionalPanel('input.id_or_wg == "Entrez"',
+                                        selectInput("cutoff", label = "SIGNIFICANCE LEVEL", 
+                                                    choices = c("Top10",0.1, 0.001, 0.0001, 0.00001, 0.000001, 0.02, 0.05, 0.1),
+                                                    selected = "Top10")),
+                       
+                       conditionalPanel('input.id_or_wg == "Entrez"',
+                                        selectInput("min", label = "MINIMUM NUMBER OF GENES FOR A CATEGORY",
+                                                    choices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), selected = 2)),
+                       
                        ##### Hide WG when Entrez selected
-                       
-                       conditionalPanel('input.id_or_wg == "WG"',
-                       selectInput("cutoff", label = "SIGNIFICANCE LEVEL", 
-                                   choices = c("Top10",0.1, 0.001, 0.0001, 0.00001, 0.000001, 0.02, 0.05, 0.1),
-                                   selected = "Top10")),
-                       
-                       conditionalPanel('input.id_or_wg == "WG"',
-                       selectInput("min", label = "MINIMUM NUMBER OF GENES FOR A CATEGORY",
-                                   choices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), selected = 2)),
                        
                        conditionalPanel('input.id_or_wg == "WG"',
                        tags$div(title="Please select a .tsv file.",
                                 fileInput("WG_file", label="WEBGESTALT OUTPUT", accept = '.tsv'))),
                        
-                       selectInput("pathway", label = "ENRICHMENT PATHWAY", 
-                                    choices = list("KEGG" = "Kegg", 
-                                                   "Transcription Factor" = "TF", 
-                                                   "WikiPathways" = "Wiki"), 
-                                    selected="Kegg"),
+                       
                        
                        br(),
                        
@@ -205,4 +211,56 @@ uiOutput("creationPool", style = "display: none;")
 # End Important
 #Credits: K. Rohde (http://stackoverflow.com/questions/35020810/dynamically-creating-tabs-with-plots-in-shiny-without-re-creating-existing-tabs/)
 ))
+
+#Returns the new JobStatusTab
+createJobStatusBar <- function(jobID){
+  
+  newTabPanels <- list(
+    tabPanel("Job Status", value = "Job",
+             ###Start Job Status tab Layout###
+             column(3),
+             column(7, align = "center", 
+                    
+                    h3("Your Job Has Been Submitted!"),
+                    h4("Your job has been submitted to the server for processing. Below is 
+                       your Job ID which can be used to return to the page to retrieve your
+                       results (once they are ready) up to seven days after they are processed"),
+                    h3(paste("Job ID:", jobID)),
+                    
+                    actionButton("jobReadyButton",
+                                 "Go To Results"),
+                    disable(textOutput("jobNotReady"))
+                    
+                    )
+             ###End Job Status tab Layout###
+             )
+  )  
+  return(newTabPanels)
+}
+
+#Returns the new ResultsTab
+createResultsBar <- function(){
+  newTabPanels <- list(
+    tabPanel("Results",
+             ###Start Results Layout###
+             sidebarLayout(
+               sidebarPanel(
+                 h2("Input Summary"),
+                 h5("Enrichment Pathway:"),
+                 h5("Filtering:"),
+                 h5("Significance Level:"),
+                 downloadButton("download_priori", "Download prioritized data"),
+                 br(),
+                 actionButton("sendEmailButton", "Send Email")
+               ),
+               mainPanel(
+                 metabologramOutput("metabologram")
+               )
+             )
+             ###End Results Layout###
+    )    
+  )  
+  return(newTabPanels)  
+} 
+
 
