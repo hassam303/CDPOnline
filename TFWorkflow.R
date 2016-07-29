@@ -14,6 +14,7 @@ TFWorkflow <- function(){
   }
   
   tf.pathways = load.WebGestalt(userData$WG_file_path, 'TF')
+  print(tf.pathways)
   TFgene.ids = get.genes.tf(tf.pathways)
   
   startCol = userData$startCol
@@ -23,7 +24,10 @@ TFWorkflow <- function(){
   transc.rna = load.gene.data(userData$TRANS_file_path, startCol) 
   TFprioritized.data = list.filter(transc.rna$transposed.data,TFgene.ids)
   
-  resultFile  = paste("users/", userData$jobID,"/prioritizedData.csv",sep ="")
+  resultFolder  = paste("users/", userData$jobID,"/prioritizedData",sep ="")
+  dir.create(resultFolder)
+  
+  resultFile = paste(resultFolder,"/prioritizedData.csv", sep = "")
   
   write.table(TFprioritized.data,
               resultFile,
@@ -35,7 +39,7 @@ TFWorkflow <- function(){
   if (is.null(filtering) || filtering == "" || is.null(theta)) {} 
   else if (filtering == "m") { 
     TFprioritized.50meanfiltered.data = overall.mean.filter(TFprioritized.data, theta)
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(TFprioritized.50meanfiltered.data,
                 meanResultFile,
@@ -47,7 +51,7 @@ TFWorkflow <- function(){
   } 
   else if (filtering == "v") {
     TFprioritized.50varfiltered.data = overall.var.filter(TFprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
     
     write.table(TFprioritized.50varfiltered.data,
                 varResultFile,
@@ -60,8 +64,8 @@ TFWorkflow <- function(){
   else if (filtering == "mv") {
     TFprioritized.50meanfiltered.data = overall.mean.filter(TFprioritized.data, theta)
     TFprioritized.50varfiltered.data = overall.var.filter(TFprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(TFprioritized.50meanfiltered.data,
                 meanResultFile,

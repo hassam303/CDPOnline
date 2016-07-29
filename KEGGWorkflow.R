@@ -14,6 +14,8 @@ KEGGWorkflow <- function(){
   }
   
   kegg.pathways = load.WebGestalt(userData$WG_file_path, 'Kegg')
+  print(kegg.pathways)
+  
   KEGGgene.ids = get.genes.kegg(kegg.pathways)
   
   startCol = userData$startCol
@@ -23,7 +25,10 @@ KEGGWorkflow <- function(){
   transc.rna = load.gene.data(userData$TRANS_file_path, startCol) 
   KEGGprioritized.data = list.filter(transc.rna$transposed.data,KEGGgene.ids)
   
-  resultFile  = paste("users/", userData$jobID,"/prioritizedData.csv",sep ="")
+  resultFolder  = paste("users/", userData$jobID,"/prioritizedData",sep ="")
+  dir.create(resultFolder)
+  
+  resultFile = paste(resultFolder,"/prioritizedData.csv", sep = "")
   
   write.table(KEGGprioritized.data,
               resultFile,
@@ -35,7 +40,7 @@ KEGGWorkflow <- function(){
   if (is.null(filtering) || filtering == "" || is.null(theta)) {} 
   else if (filtering == "m") { 
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
 
     write.table(KEGGprioritized.50meanfiltered.data,
                 meanResultFile,
@@ -47,7 +52,7 @@ KEGGWorkflow <- function(){
   } 
   else if (filtering == "v") {
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
     
     write.table(KEGGprioritized.50varfiltered.data,
                 varResultFile,
@@ -60,8 +65,8 @@ KEGGWorkflow <- function(){
   else if (filtering == "mv") {
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData_varfiltered.csv",sep ="")
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData_meanfiltered.csv",sep ="")
+    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
+    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(KEGGprioritized.50meanfiltered.data,
                    meanResultFile,

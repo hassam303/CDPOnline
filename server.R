@@ -13,13 +13,15 @@ shinyServer(function(input, output,session){
   
   jsonData<- fromJSON("jobConfigBlank.txt")
   
-  
-  # output$dlButton <- downloadHandler(
-  #   filename = "downloadedFile",
-  #   content = function(file){
-  #     write.table(read.delim("message.txt", sep = ":"),file)
-  #   }
-  # )
+  output$download_priori <- downloadHandler(
+    filename = function(){
+      paste("prioritized_Data_", jsonData$jobID)
+    },
+    content = function(file){
+      tar(tarfile = file,
+          files = file.path("users",jsonData$jobID,"prioritizedData"))
+    }
+  )
   
   # Important! : creationPool should be hidden to avoid elements flashing before they are moved.
   #              But hidden elements are ignored by shiny, unless this option below is set.
@@ -71,6 +73,8 @@ shinyServer(function(input, output,session){
     jsonData$thetaVal<- input$theta
     jsonData$filtering<- paste(input$filtering, collapse="")
     jsonData$startCol<- input$col_start
+    jsonData$cutoff<- input$cutoff
+    jsonData$minGenes<- input$min
     
     if (input$Entrez_text != "" ){
       jsonData$entrezIDs <- strsplit(input$Entrez_text,"\n")
@@ -114,7 +118,7 @@ shinyServer(function(input, output,session){
     
   })
   
-  #This button creates the 'Results' Tab
+  #This button triggers the creation 'Results' Tab
   observeEvent(input$jobReadyButton, {
     noClicks <- input$jobReadyButton
     
@@ -122,11 +126,10 @@ shinyServer(function(input, output,session){
     
     if (noClicks == 1){
       addTabToTabset(createResultsBar(),"navbar")   
-      
-      
+
       sampleMetabologramData <- list(
         list(
-          name="Metabolites",
+          name="Proteins",
           colour="#FFDDDD",
           children=list(
             list(name="M_1", colour="#0000FF"),
@@ -179,10 +182,12 @@ shinyServer(function(input, output,session){
           legendText="Legend Title"
         )
         
-    
       })  
+      jsonData2 <- fromJSON(paste("users/",input$jobid_textbox,"/userData.txt",sep = ""))
       
-      
+      output$testthing <- renderText(
+        print(jsonData2$enrichmentType)
+      )
       
       
     }
@@ -206,10 +211,10 @@ shinyServer(function(input, output,session){
   })
   #End code for SendEmailButton (in Results tab)
   
- 
+  #Start code for JobID Button 
   observeEvent(input$submit_jobid,{
     if(input$jobid_textbox == "" || is.null(input$jobid_textbox) ){
-      
+      return()
     }
     else{
       dir <- gsub("users/",replacement ="", x= list.dirs(path="users"))
@@ -221,17 +226,13 @@ shinyServer(function(input, output,session){
         jsonData<- fromJSON(paste(wd,"/userData.txt",sep =""))
         addTabToTabset(createJobStatusBar(jsonData$jobID), "navbar")
       }
-      
       else {
-        
+        return()
       }
-      
     }
-    
   })
+  #End code for JobID Button
   
- 
-
   checkGeneIDEntry <- function(){
     
     entrez <- FALSE
@@ -250,6 +251,5 @@ shinyServer(function(input, output,session){
     return(entrez || webG)
   }
   
-  
-  
+
   })
