@@ -220,6 +220,25 @@ shinyServer(function(input, output,session){
         
       })
       
+      output$test_path <- renderText({
+        print(jsonData$enrichmentType)
+      })
+      
+      output$test_jobID <- renderText({
+        print(jsonData$jobID)
+      })
+  
+      output$test_filter <- renderText({
+        switch (jsonData$filtering,
+          "m" = print("Mean Abundance"),
+          "v" = print("Variance"),
+          "mv" = print("Mean Abundance & Variance")
+        )
+        })
+      
+      output$test_cutoff <- renderText({
+        print(jsonData$thetaVal)
+      })
       
     }
   })

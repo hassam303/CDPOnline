@@ -246,7 +246,7 @@ createResultsBar <- function(){
              sidebarLayout(
                sidebarPanel(
                  h2("Job Summary"),
-                 h5(paste("ID:", jobID)),
+                 h5("ID:", textOutput("test_jobID")),
                  h5("Enrichment Pathway:", textOutput("test_path")),
                  h5("Independent filtering:", textOutput("test_filter")),
                  h5("Significance Level:", textOutput("test_cutoff")),
