@@ -233,7 +233,7 @@ createJobStatusBar <- function(jobID){
                     
                     )
              ###End Job Status tab Layout###
-             )
+            )
   )  
   return(newTabPanels)
 }
@@ -245,13 +245,17 @@ createResultsBar <- function(){
              ###Start Results Layout###
              sidebarLayout(
                sidebarPanel(
-                 h2("Input Summary"),
-                 h5("Enrichment Pathway:"),
-                 h5("Filtering:"),
-                 h5("Significance Level:"),
-                 downloadButton("download_priori", "Download prioritized data"),
+                 h2("Job Summary"),
+                 h5(paste("ID:", jobID)),
+                 h5("Enrichment Pathway:", textOutput("test_path")),
+                 h5("Independent filtering:", textOutput("test_filter")),
+                 h5("Significance Level:", textOutput("test_cutoff")),
+                 tags$hr(),
+                 downloadButton("download_zipped", "Download results"),
                  br(),
-                 actionButton("sendEmailButton", "Send Email")
+                 br(),
+                 textInput("email_textbox", label = NULL, width = "170px", placeholder = "Email address"),
+                 actionButton("sendEmailButton", "Send results by email")
                ),
                mainPanel(
                  metabologramOutput("metabologram")
@@ -262,5 +266,3 @@ createResultsBar <- function(){
   )  
   return(newTabPanels)  
 } 
-
-
