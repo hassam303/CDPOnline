@@ -96,4 +96,5 @@ userData <- fromJSON(args[1])
 WIKIWorkflow()
 
 print("Workflow Complete")
+print(Sys.time())
 

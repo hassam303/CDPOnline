@@ -1,25 +1,23 @@
 library(shiny)
-library(sendmailR)
-library(DBI)
 library(shinyjs)
 library(metabologram)
-require(parallel)
 require(jsonlite)
 source("ui.R")
 
 options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from user input
 
 shinyServer(function(input, output,session){
-  
   jsonData<- fromJSON("jobConfigBlank.txt")
-  
+
   output$download_priori <- downloadHandler(
     filename = function(){
-      paste("prioritized_Data_", jsonData$jobID)
+      paste("prioritized_Data_", jsonData$jobID,".tar.gz",
+            sep = "")
     },
     content = function(file){
       tar(tarfile = file,
-          files = file.path("users",jsonData$jobID,"prioritizedData"))
+          files = file.path("users",jsonData$jobID,"prioritizedData"),
+          compression = "gzip")
     }
   )
   
@@ -60,33 +58,33 @@ shinyServer(function(input, output,session){
   #This button creates the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
-    
+    print(proc.time())
     # # Validate that numericinput is integer, >=2
     # validate(
     #   need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
     # )
     
     #Build user JSON file
-    jsonData$jobID<- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
-    jsonData$email<- input$email
-    jsonData$enrichmentType <- input$pathway
-    jsonData$thetaVal<- input$theta
-    jsonData$filtering<- paste(input$filtering, collapse="")
-    jsonData$startCol<- input$col_start
-    jsonData$cutoff<- input$cutoff
-    jsonData$minGenes<- input$min
+    jsonData$jobID<<- gsub("([.-])|[[:punct:]]|[ ]","",as.POSIXlt(Sys.time()))
+    jsonData$email<<- input$email
+    jsonData$enrichmentType <<- input$pathway
+    jsonData$thetaVal<<- input$theta
+    jsonData$filtering<<- paste(input$filtering, collapse="")
+    jsonData$startCol<<- input$col_start
+    jsonData$cutoff<<- input$cutoff
+    jsonData$minGenes<<- input$min
     
     if (input$Entrez_text != "" ){
-      jsonData$entrezIDs <- strsplit(input$Entrez_text,"\n")
+      jsonData$entrezIDs <<- strsplit(input$Entrez_text,"\n")
     }
     if (!is.null(input$Entrez_file$datapath) ){
-      jsonData$Entrez_file_path<- input$Entrez_file$datapath
+      jsonData$Entrez_file_path<<- input$Entrez_file$datapath
     }
     if (!is.null(input$WG_file$datapath) ){
-      jsonData$WG_file_path<- input$WG_file$datapath
+      jsonData$WG_file_path<<- input$WG_file$datapath
     }
     if (!is.null(input$TRANS_file$datapath) ){
-      jsonData$TRANS_file_path<- input$TRANS_file$datapath
+      jsonData$TRANS_file_path<<- input$TRANS_file$datapath
       
     }
 
@@ -122,35 +120,73 @@ shinyServer(function(input, output,session){
   observeEvent(input$jobReadyButton, {
     noClicks <- input$jobReadyButton
     
+    genes <- read.csv("metabologram_sample_data/genes.csv")
+    proteins <- read.csv("metabologram_sample_data/proteins.csv")
+    
     if (noClicks > 1 ){}
     
     if (noClicks == 1){
       addTabToTabset(createResultsBar(),"navbar")   
 
+      genes <- read.csv("metabologram_sample_data/genes.csv")
+      proteins <- read.csv("metabologram_sample_data/proteins.csv")
+
       sampleMetabologramData <- list(
-        list(
-          name="Proteins",
-          colour="#FFDDDD",
-          children=list(
-            list(name="M_1", colour="#0000FF"),
-            list(name="M_5", colour="#F3F3FF"),
-            list(name="M_9", colour="#FFF3F3"),
-            list(name="M_b", colour="#FFDDDD"),
-            list(name="M_f", colour="#FF8585")
-          )
-        ),
         list(
           name="Genes",
           colour="#FF6E6E",
           children=list(
-            list(name="G_1", colour="#B1B1FF"),
-            list(name="G_3", colour="#DDDDFF"),
-            list(name="G_5", colour="#F3F3FF"),
-            list(name="G_7", colour="#FF6E6E"),
-            list(name="G_9", colour="#8585FF"),
-            list(name="G_b", colour="#FF1616"),
-            list(name="G_d", colour="#FF6E6E"),
-            list(name="G_f", colour="#FF0000")
+            list(name="HSPH1", colour="#0000FF"),
+            list(name="DNAJC3", colour="#F3F3FF"),
+            list(name="UGGT2", colour="#FFF3F3"),
+            list(name="HSPA1A", colour="#FFDDDD"),
+            list(name="MAN1A1", colour="#FF8585"),
+            list(name="RAD23A", colour="#FF1616"),
+            list(name="PDIA4", colour="#FF8585"),
+            list(name="CAPN2", colour="#FF1616"),
+            list(name="ERO1LB", colour="#DDDDFF"),
+            list(name="EDEM1", colour="#FF1616"),
+            list(name="UBE2J1", colour="#FF8585"),
+            list(name="BAX", colour="#FF8585"),
+            list(name="HSP90AA1", colour="#8585FF"),
+            list(name="STT3B", colour="#FF8585"),
+            list(name="LMAN1", colour="#8585FF"),
+            list(name="PDIA6", colour="#FF1616"),
+            list(name="BAK1", colour="#FF8585"),
+            list(name="SEC23A", colour="#DDDDFF"),
+            list(name="DERL3", colour="#FF8585"),
+            list(name="UBQLN4", colour="#FF8585"),
+            list(name="HSP90AB1", colour="#FF1616"),
+            list(name="ERO1L", colour="#FF8585"),
+            list(name="HERPUD1", colour="#FF1616"),
+            list(name="SAR1B", colour="#FF8585"),
+            list(name="DERL1", colour="#DDDDFF"),
+            list(name="TUSC3", colour="#DDDDFF"),
+            list(name="DNAJC10", colour="#FF8585"),
+            list(name="PPP1R15A", colour="#DDDDFF"),
+            list(name="XBP1", colour="#FF8585"),
+            list(name="EIF2S1", colour="#FF8585"),
+            list(name="MAP3K5", colour="#DDDDFF"),
+            list(name="HSPA4L", colour="#FF5858")
+          )
+        ),
+        list(
+          name="Proteins",
+          colour="#FFDDDD",
+          children=list(
+            list(name="RPN1", colour="#B1B1FF"),
+            list(name="DDOST", colour="#DDDDFF"),
+            list(name="SAR1A", colour="#F3F3FF"),
+            list(name="P4HB", colour="#FF6E6E"),
+            list(name="RRBP1", colour="#8585FF"),
+            list(name="ERO1L", colour="#FF1616"),
+            list(name="RAD23B", colour="#FF6E6E"),
+            list(name="BAX", colour="#FF0000"),
+            list(name="DNAJB1", colour="#DDDDFF"),
+            list(name="LMAN1", colour="#F3F3FF"),
+            list(name="CANX", colour="#FF0000"),
+            list(name="GANAB", colour="#FFF3F3"),
+            list(name="VCP", colour="#B1B1FF")
           )
         )
       )
@@ -174,7 +210,7 @@ shinyServer(function(input, output,session){
           sampleMetabologramData, 
           width=600, 
           height=500, 
-          main="Sample Metabologram",
+          main="Sample Data",
           showLegend=TRUE,
           fontSize=12,
           legendBreaks=sampleMetabologramBreaks,
@@ -182,12 +218,7 @@ shinyServer(function(input, output,session){
           legendText="Legend Title"
         )
         
-      })  
-      jsonData2 <- fromJSON(paste("users/",input$jobid_textbox,"/userData.txt",sep = ""))
-      
-      output$testthing <- renderText(
-        print(jsonData2$enrichmentType)
-      )
+      })
       
       
     }
@@ -223,7 +254,7 @@ shinyServer(function(input, output,session){
         wd <- paste("users/",input$jobid_textbox,sep ="")
         
         #Load user data
-        jsonData<- fromJSON(paste(wd,"/userData.txt",sep =""))
+        jsonData<<- fromJSON(paste(wd,"/userData.txt",sep =""))
         addTabToTabset(createJobStatusBar(jsonData$jobID), "navbar")
       }
       else {
@@ -252,4 +283,5 @@ shinyServer(function(input, output,session){
   }
   
 
+  
   })

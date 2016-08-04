@@ -98,4 +98,5 @@ userData <- fromJSON(args[1])
 KEGGWorkflow()
 
 print("Workflow Complete")
+print(Sys.time())
 

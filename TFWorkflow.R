@@ -97,4 +97,5 @@ userData <- fromJSON(args[1])
 TFWorkflow()
 
 print("Workflow Complete")
+print(Sys.time())
 

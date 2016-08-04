@@ -6,7 +6,7 @@ lineFixed = 0
 File.open(new_file, 'w') do |fo|
   File.foreach(original_file) do |li|
   	if lineFixed == 0
-  		fo.puts "Gene id," + li
+  		fo.puts "Sample Id," + li
   		lineFixed = 1
   	else
   		fo.puts li
