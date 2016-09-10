@@ -14,6 +14,7 @@ WIKIWorkflow <- function(){
   }
   
   wiki.pathways = load.WebGestalt(userData$WG_file_path, 'Wiki')
+  print(wiki.pathways)
   WIKIgene.ids = get.genes.wiki(wiki.pathways)
   
   startCol = userData$startCol

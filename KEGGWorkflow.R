@@ -15,7 +15,6 @@ KEGGWorkflow <- function(){
   
   kegg.pathways = load.WebGestalt(userData$WG_file_path, 'Kegg')
   print(kegg.pathways)
-  
   KEGGgene.ids = get.genes.kegg(kegg.pathways)
   
   startCol = userData$startCol

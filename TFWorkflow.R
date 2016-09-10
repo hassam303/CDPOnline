@@ -12,7 +12,7 @@ TFWorkflow <- function(){
             wait = TRUE)
     userData <- fromJSON(args[1])
   }
-  
+  print(paste("WG Path:", userData$WG_file_path,sep = ""))
   tf.pathways = load.WebGestalt(userData$WG_file_path, 'TF')
   print(tf.pathways)
   TFgene.ids = get.genes.tf(tf.pathways)

@@ -71,9 +71,9 @@ navbarPage("CDP Online",
                                     selected = "Entrez"),
                        
                        selectInput("pathway", label = "ENRICHMENT PATHWAY", 
-                                   choices = list("KEGG" = "Kegg", 
+                                   choices = list("KEGG" = "KEGG", 
                                                   "Transcription Factor" = "TF", 
-                                                  "WikiPathways" = "Wiki"), 
+                                                  "WikiPathways" = "WIKI"), 
                                    selected="Kegg"),
                        
                        tags$hr(),

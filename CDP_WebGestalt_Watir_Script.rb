@@ -50,17 +50,18 @@ puts b.title#*
 enrichment = userData['enrichmentType']
 
 case enrichment 
-when "Kegg"
+when "KEGG"
 	enrichment = "KEGG Analysis"
 when "TF"
 	enrichment = "Transcription Factor Target Analysis"
-when "Wiki"
+when "WIKI"
 	enrichment = "Wikipathways Analysis"
 
 end 
 
 #Selecting Enrichment Options
 b.element(:id => "one-ddheader").hover
+sleep(2)
 b.link(:text => enrichment).click #"JSON:enrichmentType"
 b.select_list(:name => "refset").select "hsapiens__entrezgene_protein-coding"#"JSON:refSet"
 b.select_list(:name => "cutoff").select userData['cutoff']#"JSON:sigLevel"
