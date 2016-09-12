@@ -18,7 +18,7 @@ shinyServer(function(input, output,session){
     },
     content = function(file){
       tar(tarfile = file,
-          files = file.path("users",jsonData$jobID,"prioritizedData"),
+          files = file.path("/srv/shiny-server/CDPOnline/users",jsonData$jobID,"prioritizedData"),
           compression = "gzip")
     }
   )
