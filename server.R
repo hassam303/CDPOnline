@@ -8,6 +8,8 @@ options(shiny.maxRequestSize = 1000*1024^2) #Determines allowed filesize from us
 
 shinyServer(function(input, output,session){
   jsonData<- fromJSON("jobConfigBlank.txt")
+  
+  print(system("whoami"))
 
   output$download_priori <- downloadHandler(
     filename = function(){
@@ -58,7 +60,6 @@ shinyServer(function(input, output,session){
   #This button creates the 'Job Status' Tab + job initiation logic
   observeEvent(input$submit, {
     noClicks <- input$submit
-    print(proc.time())
     # # Validate that numericinput is integer, >=2
     # validate(
     #   need(input$col_start >= 2, message = "Please enter a start column greater than or equal to 2.")
