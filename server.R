@@ -90,7 +90,7 @@ shinyServer(function(input, output,session){
     }
 
     #Create a folder to store temp job files 
-    newUserFolderPath <- paste("/var/shiny-server/www/shiny_temp/users/", jsonData$jobID, sep = "")
+    newUserFolderPath <- paste("/srv/shiny-server/CDPOnline/users/", jsonData$jobID, sep = "")
     dir.create(newUserFolderPath)
     
     #Save JSON file to temp job folder 

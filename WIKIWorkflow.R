@@ -24,7 +24,7 @@ WIKIWorkflow <- function(){
   transc.rna = load.gene.data(userData$TRANS_file_path, startCol) 
   WIKIprioritized.data = list.filter(transc.rna$transposed.data,WIKIgene.ids)
   
-  resultFolder  = paste("users/", userData$jobID,"/prioritizedData",sep ="")
+  resultFolder  = paste("/srv/shiny-server/CDPOnline/users/", userData$jobID,"/prioritizedData",sep ="")
   dir.create(resultFolder)
   
   resultFile = paste(resultFolder,"/prioritizedData.csv", sep = "")
@@ -39,7 +39,7 @@ WIKIWorkflow <- function(){
   if (is.null(filtering) || filtering == "" || is.null(theta)) {} 
   else if (filtering == "m") { 
     WIKIprioritized.50meanfiltered.data = overall.mean.filter(WIKIprioritized.data, theta)
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
+    meanResultFile = paste(resultFolder,"/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(WIKIprioritized.50meanfiltered.data,
                 meanResultFile,
@@ -51,7 +51,7 @@ WIKIWorkflow <- function(){
   } 
   else if (filtering == "v") {
     WIKIprioritized.50varfiltered.data = overall.var.filter(WIKIprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
+    varResultFile = paste(resultFolder,"/prioritizedData_varfiltered.csv",sep ="")
     
     write.table(WIKIprioritized.50varfiltered.data,
                 varResultFile,
@@ -64,8 +64,8 @@ WIKIWorkflow <- function(){
   else if (filtering == "mv") {
     WIKIprioritized.50meanfiltered.data = overall.mean.filter(WIKIprioritized.data, theta)
     WIKIprioritized.50varfiltered.data = overall.var.filter(WIKIprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
+    varResultFile = paste(resultFolder,"/prioritizedData_varfiltered.csv",sep ="")
+    meanResultFile = paste(resultFolder,"/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(WIKIprioritized.50meanfiltered.data,
                 meanResultFile,
@@ -84,7 +84,7 @@ WIKIWorkflow <- function(){
 
 fixResultsFile <- function(filePath){
   system2("irb", 
-          args = c("fixResults.rb", filePath),
+          args = c("/srv/shiny-server/CDPOnline/fixResults.rb", filePath),
           wait = TRUE,
           stdout = NULL)
 }

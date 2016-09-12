@@ -24,7 +24,7 @@ KEGGWorkflow <- function(){
   transc.rna = load.gene.data(userData$TRANS_file_path, startCol) 
   KEGGprioritized.data = list.filter(transc.rna$transposed.data,KEGGgene.ids)
   
-  resultFolder  = paste("users/", userData$jobID,"/prioritizedData",sep ="")
+  resultFolder  = paste("/srv/shiny-server/CDPOnline/users/", userData$jobID,"/prioritizedData",sep ="")
   dir.create(resultFolder)
   
   resultFile = paste(resultFolder,"/prioritizedData.csv", sep = "")
@@ -39,7 +39,7 @@ KEGGWorkflow <- function(){
   if (is.null(filtering) || filtering == "" || is.null(theta)) {} 
   else if (filtering == "m") { 
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
+    meanResultFile = paste(resultFolder,"/prioritizedData_meanfiltered.csv",sep ="")
 
     write.table(KEGGprioritized.50meanfiltered.data,
                 meanResultFile,
@@ -51,7 +51,7 @@ KEGGWorkflow <- function(){
   } 
   else if (filtering == "v") {
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
+    varResultFile = paste(resultFolder,"/prioritizedData_varfiltered.csv",sep ="")
     
     write.table(KEGGprioritized.50varfiltered.data,
                 varResultFile,
@@ -64,8 +64,8 @@ KEGGWorkflow <- function(){
   else if (filtering == "mv") {
     KEGGprioritized.50meanfiltered.data = overall.mean.filter(KEGGprioritized.data, theta)
     KEGGprioritized.50varfiltered.data = overall.var.filter(KEGGprioritized.data, theta)
-    varResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_varfiltered.csv",sep ="")
-    meanResultFile = paste("users/", userData$jobID,"/prioritizedData/prioritizedData_meanfiltered.csv",sep ="")
+    varResultFile = paste(resultFolder,"/prioritizedData_varfiltered.csv",sep ="")
+    meanResultFile = paste(resultFolder,"/prioritizedData_meanfiltered.csv",sep ="")
     
     write.table(KEGGprioritized.50meanfiltered.data,
                    meanResultFile,
@@ -84,7 +84,7 @@ KEGGWorkflow <- function(){
 
 fixResultsFile <- function(filePath){
  system2("irb", 
-         args = c("fixResults.rb", filePath),
+         args = c("/srv/shiny-server/CDPOnline/fixResults.rb", filePath),
          wait = TRUE,
          stdout = NULL)
 }
