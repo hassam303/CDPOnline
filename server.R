@@ -268,7 +268,7 @@ shinyServer(function(input, output,session){
       return()
     }
     else{
-      dir <- gsub("users/",replacement ="", x= list.dirs(path="users"))
+      dir <- gsub("users/",replacement ="", x= list.dirs(path="var/shiny-server/www/shiny_temp/users"))
       #Check for folder exsistence 
       if (length(grep(input$jobid_textbox, x = dir)) > 0){
         wd <- paste("users/",input$jobid_textbox,sep ="")
