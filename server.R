@@ -105,7 +105,7 @@ shinyServer(function(input, output,session){
     addTabToTabset(createJobStatusBar(jsonData$jobID), "navbar")
     
     #Determine workflow to be and pass argument to JobStatus page 
-    workflowScript <- paste(input$pathway,"Workflow.R",sep="")
+    workflowScript <- paste("/srv/shiny-server/CDPOnline/",input$pathway,"Workflow.R",sep="")
     
     #Spawn asyncronous R process for the workflow
     system2("Rscript",
