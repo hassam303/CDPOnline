@@ -90,7 +90,7 @@ shinyServer(function(input, output,session){
     }
 
     #Create a folder to store temp job files 
-    newUserFolderPath <- paste("users/", jsonData$jobID, sep = "")
+    newUserFolderPath <- paste("/var/shiny-server/www/shiny_temp/users/", jsonData$jobID, sep = "")
     dir.create(newUserFolderPath)
     
     #Save JSON file to temp job folder 
@@ -109,7 +109,7 @@ shinyServer(function(input, output,session){
     
     #Spawn asyncronous R process for the workflow
     system2("Rscript",
-            args = c(workflowScript,paste("users/", jsonData$jobID,"/userData.txt",sep ="")),
+            args = c(workflowScript,paste(newUserFolderPath,"/userData.txt",sep ="")),
             wait = FALSE)
 
     
