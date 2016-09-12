@@ -268,10 +268,10 @@ shinyServer(function(input, output,session){
       return()
     }
     else{
-      dir <- gsub("users/",replacement ="", x= list.dirs(path="var/shiny-server/www/shiny_temp/users"))
+      dir <- list.dirs(path="/srv/shiny-server/CDPOnline/users")
       #Check for folder exsistence 
       if (length(grep(input$jobid_textbox, x = dir)) > 0){
-        wd <- paste("users/",input$jobid_textbox,sep ="")
+        wd <- paste("/srv/shiny-server/CDPOnline/users/",input$jobid_textbox,sep ="")
         
         #Load user data
         jsonData<<- fromJSON(paste(wd,"/userData.txt",sep =""))
